@@ -3,11 +3,11 @@ import axios from "axios";
 import {
   FiUploadCloud,
   FiTag,
-  FiDollarSign,
   FiGrid,
   FiCoffee,
 } from "react-icons/fi";
 import { FaRupeeSign } from "react-icons/fa";
+
 function AddItem() {
   const [form, setForm] = useState({
     name: "",
@@ -39,26 +39,44 @@ function AddItem() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = new FormData();
-    data.append("name", form.name);
-    data.append("category", form.category);
-    data.append("price", form.price);
-    data.append("type", form.type);
-    data.append("image", image);
+    try {
+      const data = new FormData();
 
-    await axios.post("http://localhost:5000/api/menu/add", data);
+      data.append("name", form.name);
+      data.append("category", form.category);
+      data.append("price", form.price);
+      data.append("type", form.type);
 
-    alert("Item Added Successfully 🔥");
+      if (image) {
+        data.append("image", image);
+      }
 
-    setForm({
-      name: "",
-      category: "",
-      price: "",
-      type: "veg",
-    });
+      await axios.post(
+        "http://localhost:5000/api/menu/add",
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-    setImage(null);
-    setPreview(null);
+      alert("Item Added Successfully 🔥");
+
+      // reset
+      setForm({
+        name: "",
+        category: "",
+        price: "",
+        type: "veg",
+      });
+
+      setImage(null);
+      setPreview(null);
+    } catch (error) {
+      console.log(error);
+      alert("Failed to add item");
+    }
   };
 
   return (
@@ -68,7 +86,10 @@ function AddItem() {
         {/* Header */}
         <div className="p-8 border-b border-gray-800 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Add Menu Item</h1>
+            <h1 className="text-3xl font-bold">
+              Add Menu Item
+            </h1>
+
             <p className="text-gray-400 mt-2">
               Add new food items to Gunnu Chinese Shop
             </p>
@@ -84,7 +105,7 @@ function AddItem() {
           onSubmit={handleSubmit}
           className="grid md:grid-cols-2 gap-8 p-8"
         >
-          {/* Left Side */}
+          {/* Left */}
           <div className="space-y-6">
 
             {/* Name */}
@@ -95,6 +116,7 @@ function AddItem() {
 
               <div className="flex items-center bg-gray-800 rounded-xl px-4">
                 <FiCoffee className="text-gray-400" />
+
                 <input
                   type="text"
                   name="name"
@@ -102,6 +124,7 @@ function AddItem() {
                   value={form.name}
                   onChange={handleChange}
                   className="w-full bg-transparent p-4 outline-none"
+                  required
                 />
               </div>
             </div>
@@ -114,6 +137,7 @@ function AddItem() {
 
               <div className="flex items-center bg-gray-800 rounded-xl px-4">
                 <FiGrid className="text-gray-400" />
+
                 <input
                   type="text"
                   name="category"
@@ -121,29 +145,32 @@ function AddItem() {
                   value={form.category}
                   onChange={handleChange}
                   className="w-full bg-transparent p-4 outline-none"
+                  required
                 />
               </div>
             </div>
 
             {/* Price */}
-          <div>
-  <label className="text-sm text-gray-400 mb-2 block">
-    Price
-  </label>
+            <div>
+              <label className="text-sm text-gray-400 mb-2 block">
+                Price
+              </label>
 
-  <div className="flex items-center bg-gray-800 rounded-xl px-4">
-    <FaRupeeSign className="text-gray-400 mr-2" />
+              <div className="flex items-center bg-gray-800 rounded-xl px-4">
+                <FaRupeeSign className="text-gray-400 mr-2" />
 
-    <input
-      type="number"
-      name="price"
-      placeholder="220"
-      value={form.price}
-      onChange={handleChange}
-      className="w-full bg-transparent p-4 outline-none"
-    />
-  </div>
-</div>
+                <input
+                  type="number"
+                  name="price"
+                  placeholder="220"
+                  value={form.price}
+                  onChange={handleChange}
+                  className="w-full bg-transparent p-4 outline-none"
+                  required
+                />
+              </div>
+            </div>
+
             {/* Type */}
             <div>
               <label className="text-sm text-gray-400 mb-2 block">
@@ -159,11 +186,17 @@ function AddItem() {
                   onChange={handleChange}
                   className="w-full bg-transparent p-4 outline-none"
                 >
-                  <option value="veg" className="bg-gray-900">
+                  <option
+                    value="veg"
+                    className="bg-gray-900"
+                  >
                     Veg
                   </option>
 
-                  <option value="nonveg" className="bg-gray-900">
+                  <option
+                    value="nonveg"
+                    className="bg-gray-900"
+                  >
                     Non Veg
                   </option>
                 </select>
@@ -171,7 +204,7 @@ function AddItem() {
             </div>
           </div>
 
-          {/* Right Side Upload */}
+          {/* Right */}
           <div>
             <label className="text-sm text-gray-400 mb-2 block">
               Upload Food Image
@@ -180,27 +213,34 @@ function AddItem() {
             <label
               onDragOver={(e) => e.preventDefault()}
               onDrop={handleDrop}
-              className="border-2 border-dashed border-gray-700 rounded-2xl h-80 flex flex-col justify-center items-center text-center cursor-pointer hover:border-orange-500 transition"
+              className="border-2 border-dashed border-gray-700 rounded-2xl h-80 flex flex-col justify-center items-center text-center cursor-pointer hover:border-orange-500 transition overflow-hidden"
             >
               <input
                 type="file"
                 hidden
                 accept="image/*"
-                onChange={(e) => handleImage(e.target.files[0])}
+                onChange={(e) =>
+                  handleImage(e.target.files[0])
+                }
               />
 
               {preview ? (
                 <img
                   src={preview}
                   alt="preview"
-                  className="w-full h-full object-cover rounded-2xl"
+                  className="w-full h-full object-cover"
                 />
               ) : (
                 <>
-                  <FiUploadCloud size={50} className="text-orange-400 mb-4" />
+                  <FiUploadCloud
+                    size={50}
+                    className="text-orange-400 mb-4"
+                  />
+
                   <p className="text-lg font-semibold">
                     Drag & Drop Image Here
                   </p>
+
                   <p className="text-sm text-gray-500 mt-2">
                     or click to upload file
                   </p>
