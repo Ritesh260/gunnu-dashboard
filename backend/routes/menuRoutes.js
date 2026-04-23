@@ -3,10 +3,12 @@ const router = express.Router();
 const multer = require("multer");
 const Menu = require("../models/Menu");
 
+/* Upload Config */
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads/");
   },
+
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);
   },
@@ -14,6 +16,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+/* ===========================
+   ADD ITEM
+=========================== */
 router.post("/add", upload.single("image"), async (req, res) => {
   try {
     const newItem = new Menu({
@@ -21,6 +26,7 @@ router.post("/add", upload.single("image"), async (req, res) => {
       category: req.body.category,
       price: req.body.price,
       type: req.body.type,
+
       image: req.file
         ? `http://localhost:5000/uploads/${req.file.filename}`
         : "",
@@ -28,20 +34,105 @@ router.post("/add", upload.single("image"), async (req, res) => {
 
     await newItem.save();
 
-    res.json({ message: "Item Added Successfully" });
+    res.json({
+      success: true,
+      message: "Item Added Successfully",
+      data: newItem,
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
   }
 });
 
+/* ===========================
+   GET ALL ITEMS
+=========================== */
 router.get("/", async (req, res) => {
-  const items = await Menu.find();
-  res.json(items);
+  try {
+    const items = await Menu.find().sort({
+      createdAt: -1,
+    });
+
+    res.json(items);
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
+  }
 });
 
+/* ===========================
+   GET SINGLE ITEM
+=========================== */
+router.get("/:id", async (req, res) => {
+  try {
+    const item = await Menu.findById(req.params.id);
+
+    res.json(item);
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+});
+
+/* ===========================
+   UPDATE ITEM
+=========================== */
+router.put("/:id", upload.single("image"), async (req, res) => {
+  try {
+    const updateData = {
+      name: req.body.name,
+      category: req.body.category,
+      price: req.body.price,
+      type: req.body.type,
+    };
+
+    if (req.file) {
+      updateData.image =
+        `http://localhost:5000/uploads/${req.file.filename}`;
+    }
+
+    const updatedItem =
+      await Menu.findByIdAndUpdate(
+        req.params.id,
+        updateData,
+        { new: true }
+      );
+
+    res.json({
+      success: true,
+      message: "Item Updated Successfully",
+      data: updatedItem,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/* ===========================
+   DELETE ITEM
+=========================== */
 router.delete("/:id", async (req, res) => {
-  await Menu.findByIdAndDelete(req.params.id);
-  res.json({ message: "Deleted Successfully" });
+  try {
+    await Menu.findByIdAndDelete(req.params.id);
+
+    res.json({
+      success: true,
+      message: "Deleted Successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
 });
 
 module.exports = router;

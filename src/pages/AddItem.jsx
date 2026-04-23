@@ -6,7 +6,11 @@ import {
   FiGrid,
   FiCoffee,
 } from "react-icons/fi";
-import { FaRupeeSign } from "react-icons/fa";
+
+import {
+  FaRupeeSign,
+  FaCheckCircle,
+} from "react-icons/fa";
 
 function AddItem() {
   const [form, setForm] = useState({
@@ -18,9 +22,13 @@ function AddItem() {
 
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleImage = (file) => {
@@ -40,6 +48,8 @@ function AddItem() {
     e.preventDefault();
 
     try {
+      setLoading(true);
+
       const data = new FormData();
 
       data.append("name", form.name);
@@ -56,14 +66,14 @@ function AddItem() {
         data,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type":
+              "multipart/form-data",
           },
         }
       );
 
       alert("Item Added Successfully 🔥");
 
-      // reset
       setForm({
         name: "",
         category: "",
@@ -75,47 +85,53 @@ function AddItem() {
       setPreview(null);
     } catch (error) {
       console.log(error);
-      alert("Failed to add item");
+      alert("Failed to Add Item");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="p-8 bg-gray-950 min-h-screen text-white">
-      <div className="max-w-5xl mx-auto bg-gray-900 rounded-3xl shadow-2xl border border-gray-800 overflow-hidden">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-950 text-black dark:text-white px-3 sm:px-5 lg:px-8 py-4 sm:py-6 overflow-x-hidden w-full">
 
-        {/* Header */}
-        <div className="p-8 border-b border-gray-800 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">
-              Add Menu Item
-            </h1>
+      {/* Full Width Header Mobile */}
+      <div className="w-full mb-6 sm:mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 
-            <p className="text-gray-400 mt-2">
-              Add new food items to Gunnu Chinese Shop
-            </p>
-          </div>
+        <div className="w-full">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">
+            Add Menu Item
+          </h1>
 
-          <div className="bg-orange-500/20 text-orange-400 px-4 py-2 rounded-xl">
-            Admin Panel
-          </div>
+          <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 mt-1">
+            Add new food items to your store
+          </p>
         </div>
 
-        {/* Form */}
+        <div className="w-full sm:w-fit bg-orange-500 text-white px-4 py-3 rounded-xl font-semibold text-center">
+          Admin Panel
+        </div>
+
+      </div>
+
+      {/* Main Card Full Width */}
+      <div className="w-full bg-white dark:bg-gray-900 rounded-2xl sm:rounded-3xl border border-gray-200 dark:border-gray-800 shadow-xl overflow-hidden">
+
         <form
           onSubmit={handleSubmit}
-          className="grid md:grid-cols-2 gap-8 p-8"
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 w-full"
         >
-          {/* Left */}
-          <div className="space-y-6">
+
+          {/* Left Side */}
+          <div className="space-y-5 sm:space-y-6 w-full">
 
             {/* Name */}
-            <div>
-              <label className="text-sm text-gray-400 mb-2 block">
+            <div className="w-full">
+              <label className="block mb-2 text-sm font-medium">
                 Item Name
               </label>
 
-              <div className="flex items-center bg-gray-800 rounded-xl px-4">
-                <FiCoffee className="text-gray-400" />
+              <div className="w-full flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-3 sm:px-4">
+                <FiCoffee className="text-gray-500 shrink-0" />
 
                 <input
                   type="text"
@@ -123,20 +139,20 @@ function AddItem() {
                   placeholder="Chicken Fried Rice"
                   value={form.name}
                   onChange={handleChange}
-                  className="w-full bg-transparent p-4 outline-none"
+                  className="w-full bg-transparent p-3 sm:p-4 outline-none"
                   required
                 />
               </div>
             </div>
 
             {/* Category */}
-            <div>
-              <label className="text-sm text-gray-400 mb-2 block">
+            <div className="w-full">
+              <label className="block mb-2 text-sm font-medium">
                 Category
               </label>
 
-              <div className="flex items-center bg-gray-800 rounded-xl px-4">
-                <FiGrid className="text-gray-400" />
+              <div className="w-full flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-3 sm:px-4">
+                <FiGrid className="text-gray-500 shrink-0" />
 
                 <input
                   type="text"
@@ -144,20 +160,20 @@ function AddItem() {
                   placeholder="Chinese / Indian"
                   value={form.category}
                   onChange={handleChange}
-                  className="w-full bg-transparent p-4 outline-none"
+                  className="w-full bg-transparent p-3 sm:p-4 outline-none"
                   required
                 />
               </div>
             </div>
 
             {/* Price */}
-            <div>
-              <label className="text-sm text-gray-400 mb-2 block">
+            <div className="w-full">
+              <label className="block mb-2 text-sm font-medium">
                 Price
               </label>
 
-              <div className="flex items-center bg-gray-800 rounded-xl px-4">
-                <FaRupeeSign className="text-gray-400 mr-2" />
+              <div className="w-full flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-3 sm:px-4">
+                <FaRupeeSign className="text-gray-500 shrink-0" />
 
                 <input
                   type="number"
@@ -165,62 +181,67 @@ function AddItem() {
                   placeholder="220"
                   value={form.price}
                   onChange={handleChange}
-                  className="w-full bg-transparent p-4 outline-none"
+                  className="w-full bg-transparent p-3 sm:p-4 outline-none"
                   required
                 />
               </div>
             </div>
 
             {/* Type */}
-            <div>
-              <label className="text-sm text-gray-400 mb-2 block">
+            <div className="w-full">
+              <label className="block mb-2 text-sm font-medium">
                 Food Type
               </label>
 
-              <div className="flex items-center bg-gray-800 rounded-xl px-4">
-                <FiTag className="text-gray-400" />
+              <div className="w-full flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-3 sm:px-4">
+                <FiTag className="text-gray-500 shrink-0" />
 
                 <select
                   name="type"
                   value={form.type}
                   onChange={handleChange}
-                  className="w-full bg-transparent p-4 outline-none"
+                  className="w-full bg-transparent p-3 sm:p-4 outline-none"
                 >
-                  <option
-                    value="veg"
-                    className="bg-gray-900"
-                  >
-                    Veg
-                  </option>
-
-                  <option
-                    value="nonveg"
-                    className="bg-gray-900"
-                  >
-                    Non Veg
-                  </option>
+                  <option value="veg">Veg</option>
+                  <option value="nonveg">Non Veg</option>
                 </select>
               </div>
             </div>
+
+            {/* Mobile Button Full Width */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="lg:hidden w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-semibold"
+            >
+              {loading ? "Adding..." : "Add Item"}
+            </button>
+
           </div>
 
-          {/* Right */}
-          <div>
-            <label className="text-sm text-gray-400 mb-2 block">
+          {/* Right Side */}
+          <div className="w-full">
+
+            <label className="block mb-2 text-sm font-medium">
               Upload Food Image
             </label>
 
             <label
-              onDragOver={(e) => e.preventDefault()}
+              onDragOver={(e) =>
+                e.preventDefault()
+              }
               onDrop={handleDrop}
-              className="border-2 border-dashed border-gray-700 rounded-2xl h-80 flex flex-col justify-center items-center text-center cursor-pointer hover:border-orange-500 transition overflow-hidden"
+              className="w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl min-h-[250px] sm:min-h-[320px] flex flex-col justify-center items-center text-center cursor-pointer hover:border-orange-500 transition overflow-hidden bg-gray-50 dark:bg-gray-800 p-4"
             >
+
               <input
                 type="file"
                 hidden
                 accept="image/*"
                 onChange={(e) =>
-                  handleImage(e.target.files[0])
+                  handleImage(
+                    e.target.files[0]
+                  )
                 }
               />
 
@@ -228,30 +249,45 @@ function AddItem() {
                 <img
                   src={preview}
                   alt="preview"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover rounded-xl"
                 />
               ) : (
                 <>
                   <FiUploadCloud
                     size={50}
-                    className="text-orange-400 mb-4"
+                    className="text-orange-500 mb-4"
                   />
 
-                  <p className="text-lg font-semibold">
-                    Drag & Drop Image Here
+                  <p className="text-base sm:text-lg font-semibold">
+                    Upload Food Image
                   </p>
 
                   <p className="text-sm text-gray-500 mt-2">
-                    or click to upload file
+                    Tap here or drag image
                   </p>
                 </>
               )}
+
             </label>
 
-            <button className="w-full mt-6 bg-orange-500 hover:bg-orange-600 transition py-4 rounded-xl font-semibold text-lg">
-              Add Item
+            {image && (
+              <div className="mt-4 flex items-center gap-2 text-green-500 text-sm break-all">
+                <FaCheckCircle />
+                {image.name}
+              </div>
+            )}
+
+            {/* Desktop Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="hidden lg:block w-full mt-6 bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl font-semibold"
+            >
+              {loading ? "Adding..." : "Add Item"}
             </button>
+
           </div>
+
         </form>
       </div>
     </div>
