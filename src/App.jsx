@@ -12,6 +12,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 import { Routes, Route, Outlet } from "react-router-dom";
 
+import { Toaster } from "react-hot-toast";
+
 function Layout() {
   return (
     <ProtectedRoute>
@@ -32,31 +34,35 @@ function Layout() {
 
 function App() {
   return (
-    <Routes>
-      {/* Login */}
-      <Route path="/login" element={<Login />} />
+    <>
+      {/* TOASTER GLOBAL (IMPORTANT) */}
+      <Toaster position="top-right" />
 
-      {/* Protected Layout */}
-      <Route path="/" element={<Layout />}>
-        <Route index element={<Dashboard />} />
-        <Route path="menu" element={<MenuList />} />
-        <Route path="menu/add" element={<AddItem />} />
-        <Route path="menu/edit/:id" element={<EditItem />} />
-        <Route path="owner" element={<AdminOwner />} />
+      <Routes>
+        {/* Login */}
+        <Route path="/login" element={<Login />} />
 
-        <Route path="settings" element={<Settings />} />
-      </Route>
+        {/* Protected Layout */}
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="menu" element={<MenuList />} />
+          <Route path="menu/add" element={<AddItem />} />
+          <Route path="menu/edit/:id" element={<EditItem />} />
+          <Route path="owner" element={<AdminOwner />} />
+          <Route path="settings" element={<Settings />} />
+        </Route>
 
-      {/* 404 */}
-      <Route
-        path="*"
-        element={
-          <div className="p-10 text-red-500 text-3xl font-bold">
-            404 Page Not Found
-          </div>
-        }
-      />
-    </Routes>
+        {/* 404 */}
+        <Route
+          path="*"
+          element={
+            <div className="p-10 text-red-500 text-3xl font-bold">
+              404 Page Not Found
+            </div>
+          }
+        />
+      </Routes>
+    </>
   );
 }
 

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 import {
   FiUploadCloud,
   FiTag,
@@ -23,7 +24,7 @@ function AddItem() {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
-
+const token = localStorage.getItem("token");
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -62,17 +63,17 @@ function AddItem() {
       }
 
       await axios.post(
-        "http://localhost:5000/api/menu/add",
-        data,
-        {
-          headers: {
-            "Content-Type":
-              "multipart/form-data",
-          },
-        }
-      );
+  "http://localhost:5000/api/menu/add",
+  data,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
+    },
+  }
+);
 
-      alert("Item Added Successfully 🔥");
+      toast.success("Item Added Successfully 🔥");
 
       setForm({
         name: "",
@@ -85,7 +86,7 @@ function AddItem() {
       setPreview(null);
     } catch (error) {
       console.log(error);
-      alert("Failed to Add Item");
+      toast.error("Failed to Add Item");
     } finally {
       setLoading(false);
     }
