@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const Menu = require("../models/Menu");
+const authMiddleware = require("../middleware/authMiddleware");
 
 /* Upload Config */
 const storage = multer.diskStorage({
@@ -17,35 +18,40 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /* ===========================
-   ADD ITEM
+   ADD ITEM (Protected)
 =========================== */
-router.post("/add", upload.single("image"), async (req, res) => {
-  try {
-    const newItem = new Menu({
-      name: req.body.name,
-      category: req.body.category,
-      price: req.body.price,
-      type: req.body.type,
+router.post(
+  "/add",
+  authMiddleware,
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      const newItem = new Menu({
+        name: req.body.name,
+        category: req.body.category,
+        price: req.body.price,
+        type: req.body.type,
 
-      image: req.file
-        ? `http://localhost:5000/uploads/${req.file.filename}`
-        : "",
-    });
+        image: req.file
+          ? `http://localhost:5000/uploads/${req.file.filename}`
+          : "",
+      });
 
-    await newItem.save();
+      await newItem.save();
 
-    res.json({
-      success: true,
-      message: "Item Added Successfully",
-      data: newItem,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+      res.json({
+        success: true,
+        message: "Item Added Successfully",
+        data: newItem,
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: error.message,
+      });
+    }
   }
-});
+);
 
 /* ===========================
    GET ALL ITEMS
@@ -80,59 +86,68 @@ router.get("/:id", async (req, res) => {
 });
 
 /* ===========================
-   UPDATE ITEM
+   UPDATE ITEM (Protected)
 =========================== */
-router.put("/:id", upload.single("image"), async (req, res) => {
-  try {
-    const updateData = {
-      name: req.body.name,
-      category: req.body.category,
-      price: req.body.price,
-      type: req.body.type,
-    };
+router.put(
+  "/:id",
+  authMiddleware,
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      const updateData = {
+        name: req.body.name,
+        category: req.body.category,
+        price: req.body.price,
+        type: req.body.type,
+      };
 
-    if (req.file) {
-      updateData.image =
-        `http://localhost:5000/uploads/${req.file.filename}`;
+      if (req.file) {
+        updateData.image =
+          `http://localhost:5000/uploads/${req.file.filename}`;
+      }
+
+      const updatedItem =
+        await Menu.findByIdAndUpdate(
+          req.params.id,
+          updateData,
+          { new: true }
+        );
+
+      res.json({
+        success: true,
+        message: "Item Updated Successfully",
+        data: updatedItem,
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: error.message,
+      });
     }
-
-    const updatedItem =
-      await Menu.findByIdAndUpdate(
-        req.params.id,
-        updateData,
-        { new: true }
-      );
-
-    res.json({
-      success: true,
-      message: "Item Updated Successfully",
-      data: updatedItem,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
   }
-});
+);
 
 /* ===========================
-   DELETE ITEM
+   DELETE ITEM (Protected)
 =========================== */
-router.delete("/:id", async (req, res) => {
-  try {
-    await Menu.findByIdAndDelete(req.params.id);
+router.delete(
+  "/:id",
+  authMiddleware,
+  async (req, res) => {
+    try {
+      await Menu.findByIdAndDelete(req.params.id);
 
-    res.json({
-      success: true,
-      message: "Deleted Successfully",
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
+      res.json({
+        success: true,
+        message: "Deleted Successfully",
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: error.message,
+      });
+    }
   }
-});
+);
 
 module.exports = router;

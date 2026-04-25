@@ -7,8 +7,9 @@ const app = express();
 
 /* ROUTES */
 const menuRoutes = require("./routes/menuRoutes");
-const ownerRoutes = require("./routes/ownerRoutes"); // ADD THIS
-
+const ownerRoutes = require("./routes/ownerRoutes");
+const authRoutes = require("./routes/authRoutes"); // NEW
+const settingsRoutes = require("./routes/settingsRoutes");
 /* MIDDLEWARE */
 app.use(cors());
 app.use(express.json());
@@ -17,13 +18,20 @@ app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
 /* API ROUTES */
+app.use("/api/auth", authRoutes); // LOGIN ROUTE
 app.use("/api/menu", menuRoutes);
-app.use("/api/owner", ownerRoutes); // ADD THIS
+app.use("/api/owner", ownerRoutes);
+app.use("/api/settings", settingsRoutes);
 
 /* DATABASE */
-mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log("MongoDB Connected"))
-.catch((err) => console.log(err));
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() =>
+    console.log("MongoDB Connected")
+  )
+  .catch((err) =>
+    console.log(err)
+  );
 
 /* TEST */
 app.get("/", (req, res) => {
@@ -32,5 +40,7 @@ app.get("/", (req, res) => {
 
 /* SERVER */
 app.listen(5000, () => {
-  console.log("Server running on port 5000");
+  console.log(
+    "Server running on port 5000"
+  );
 });

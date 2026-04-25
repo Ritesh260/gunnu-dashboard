@@ -34,28 +34,28 @@ function EditItem() {
     fetchItem();
   }, []);
 
-  const fetchItem = async () => {
-    try {
-      const res = await axios.get(
-        `http://localhost:5000/api/menu/${id}`
-      );
+ const fetchItem = async () => {
+  try {
+    const res = await axios.get(
+      `http://localhost:5000/api/menu/${id}`
+    );
 
-      setForm({
-        name: res.data.name || "",
-        category:
-          res.data.category || "",
-        price: res.data.price || "",
-        type:
-          res.data.type || "veg",
-      });
+    setForm({
+      name: res.data.name || "",
+      category: res.data.category || "",
+      price: res.data.price || "",
+      type: res.data.type || "veg",
+      image: res.data.image || "",   // ✅ ADD THIS
+    });
 
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-      alert("Item not found");
-      navigate("/menu");
-    }
-  };
+    setPreview(res.data.image || ""); // ✅ IMPORTANT
+    setLoading(false);
+  } catch (error) {
+    console.log(error);
+    alert("Item not found");
+    navigate("/menu");
+  }
+};
 
   const handleChange = (e) => {
     setForm({
