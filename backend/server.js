@@ -8,8 +8,9 @@ const app = express();
 /* ROUTES */
 const menuRoutes = require("./routes/menuRoutes");
 const ownerRoutes = require("./routes/ownerRoutes");
-const authRoutes = require("./routes/authRoutes"); // NEW
+const authRoutes = require("./routes/authRoutes");
 const settingsRoutes = require("./routes/settingsRoutes");
+
 /* MIDDLEWARE */
 app.use(cors());
 app.use(express.json());
@@ -18,29 +19,26 @@ app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
 /* API ROUTES */
-app.use("/api/auth", authRoutes); // LOGIN ROUTE
+app.use("/api/auth", authRoutes);
 app.use("/api/menu", menuRoutes);
 app.use("/api/owner", ownerRoutes);
 app.use("/api/settings", settingsRoutes);
-
-/* DATABASE */
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() =>
-    console.log("MongoDB Connected")
-  )
-  .catch((err) =>
-    console.log(err)
-  );
 
 /* TEST */
 app.get("/", (req, res) => {
   res.send("Backend Running...");
 });
 
-/* SERVER */
-app.listen(5000, () => {
-  console.log(
-    "Server running on port 5000"
-  );
-});
+/* DATABASE + SERVER START */
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("MongoDB Connected");
+
+    app.listen(process.env.PORT || 5000, () => {
+      console.log("Server running...");
+    });
+  })
+  .catch((err) => {
+    console.log("Mongo Error:", err);
+  });
