@@ -18,37 +18,37 @@ function MenuList() {
     fetchItems();
   }, []);
 
-  const fetchItems = async () => {
-    try {
-      const res = await axios.get(
-        "http://localhost:5000/api/menu"
-      );
-
-      setItems(res.data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const deleteItem = async (id) => {
-    const confirmDelete = window.confirm(
-      "Delete this item?"
+const fetchItems = async () => {
+  try {
+    const res = await axios.get(
+      "https://gunnu-dashboard.onrender.com/api/menu"
     );
 
-    if (!confirmDelete) return;
+    setItems(res.data);
+  } catch (error) {
+    console.log(error);
+  } finally {
+    setLoading(false);
+  }
+};
 
-    try {
-      await axios.delete(
-        `http://localhost:5000/api/menu/${id}`
-      );
+const deleteItem = async (id) => {
+  const confirmDelete = window.confirm(
+    "Delete this item?"
+  );
 
-      fetchItems();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  if (!confirmDelete) return;
+
+  try {
+    await axios.delete(
+      `https://gunnu-dashboard.onrender.com/api/menu/${id}`
+    );
+
+    fetchItems();
+  } catch (error) {
+    console.log(error);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-950 text-black dark:text-white p-4 sm:p-6 lg:p-8">

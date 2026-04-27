@@ -44,26 +44,28 @@ const navigate = useNavigate();
     fetchOwnerData();
   }, []);
 
-  const fetchOwnerData = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/api/owner");
+const fetchOwnerData = async () => {
+  try {
+    const res = await axios.get(
+      "https://gunnu-dashboard.onrender.com/api/owner"
+    );
 
-      if (res.data) {
-        setForm(res.data);
+    if (res.data) {
+      setForm(res.data);
 
-        if (res.data.image) {
-          setPreview(
-            `http://localhost:5000/uploads/${res.data.image}`
-          );
-        }
+      if (res.data.image) {
+        setPreview(
+          `https://gunnu-dashboard.onrender.com/uploads/${res.data.image}`
+        );
       }
-
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-      setLoading(false);
     }
-  };
+
+    setLoading(false);
+  } catch (error) {
+    console.log(error);
+    setLoading(false);
+  }
+};
 
   const handleChange = (e) => {
     setForm({
@@ -92,43 +94,43 @@ const navigate = useNavigate();
     if (fileRef.current) fileRef.current.value = "";
   };
 
-  const updateData = async () => {
-    try {
-      setSaving(true);
-      setSuccess("");
+ const updateData = async () => {
+  try {
+    setSaving(true);
+    setSuccess("");
 
-      const data = new FormData();
+    const data = new FormData();
 
-      Object.keys(form).forEach((key) => {
-        if (key !== "image") {
-          data.append(key, form[key]);
-        }
-      });
-
-      if (imageFile) {
-        data.append("image", imageFile);
+    Object.keys(form).forEach((key) => {
+      if (key !== "image") {
+        data.append(key, form[key]);
       }
+    });
 
-      await axios.put(
-        `http://localhost:5000/api/owner/update/${form._id}`,
-        data,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      setSuccess("Owner Section Updated Successfully");
-      setSaving(false);
-
-      fetchOwnerData();
-    } catch (error) {
-      console.log(error);
-      alert("Update Failed");
-      setSaving(false);
+    if (imageFile) {
+      data.append("image", imageFile);
     }
-  };
+
+    await axios.put(
+      `https://gunnu-dashboard.onrender.com/api/owner/update/${form._id}`,
+      data,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    setSuccess("Owner Section Updated Successfully");
+    setSaving(false);
+
+    fetchOwnerData();
+  } catch (error) {
+    console.log(error);
+    alert("Update Failed");
+    setSaving(false);
+  }
+};
 
   if (loading) {
     return (

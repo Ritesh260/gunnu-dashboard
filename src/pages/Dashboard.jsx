@@ -26,15 +26,15 @@ function Dashboard() {
   }, [darkMode]);
 
   const fetchItems = async () => {
-    try {
-      const res = await axios.get(
-        "http://localhost:5000/api/menu"
-      );
-      setItems(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  try {
+    const res = await axios.get(
+      "https://gunnu-dashboard.onrender.com/api/menu"
+    );
+    setItems(res.data);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
   const vegCount = items.filter(
     (item) => item.type === "veg"

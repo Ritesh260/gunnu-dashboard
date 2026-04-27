@@ -29,35 +29,35 @@ const token = localStorage.getItem("token");
 
   // GET SINGLE ITEM
   const fetchItem = async () => {
-    try {
-      const res = await axios.get(
-        `http://localhost:5000/api/menu/${id}`
-      );
+  try {
+    const res = await axios.get(
+      `https://gunnu-dashboard.onrender.com/api/menu/${id}`
+    );
 
-      const data = res.data;
+    const data = res.data;
 
-      if (!data) {
-        alert("Item not found");
-        navigate("/menu");
-        return;
-      }
-
-      setForm({
-        name: data.name || "",
-        category: data.category || "",
-        price: data.price || "",
-        type: data.type || "veg",
-      });
-
-      setPreview(data.image || "");
-
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
+    if (!data) {
       alert("Item not found");
       navigate("/menu");
+      return;
     }
-  };
+
+    setForm({
+      name: data.name || "",
+      category: data.category || "",
+      price: data.price || "",
+      type: data.type || "veg",
+    });
+
+    setPreview(data.image || "");
+
+    setLoading(false);
+  } catch (error) {
+    console.log(error);
+    alert("Item not found");
+    navigate("/menu");
+  }
+};
 
   // TEXT CHANGE
   const handleChange = (e) => {
@@ -96,7 +96,7 @@ const token = localStorage.getItem("token");
     }
 
     await axios.put(
-      `http://localhost:5000/api/menu/${id}`,
+      `https://gunnu-dashboard.onrender.com/api/menu/${id}`,
       formData,
       {
         headers: {
@@ -108,7 +108,6 @@ const token = localStorage.getItem("token");
 
     alert("Updated Successfully 🔥");
     navigate("/menu");
-
   } catch (error) {
     console.log(error);
     alert("Update Failed");

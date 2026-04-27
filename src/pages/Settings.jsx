@@ -42,10 +42,10 @@ function Settings() {
     fetchProfile();
   }, []);
 
-  const fetchProfile = async () => {
+ const fetchProfile = async () => {
   try {
     const res = await axios.get(
-      "http://localhost:5000/api/settings/profile",
+      "https://gunnu-dashboard.onrender.com/api/settings/profile",
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -54,7 +54,7 @@ function Settings() {
     );
 
     if (res.data.success) {
-      setProfile(res.data.admin); // 🔥 FIX HERE
+      setProfile(res.data.admin);
       setPreview(res.data.admin.image || "");
     }
   } catch (error) {
@@ -106,7 +106,7 @@ function Settings() {
         }
 
         await axios.put(
-          "http://localhost:5000/api/settings/profile",
+         "https://gunnu-dashboard.onrender.com/api/settings/profile",
           formData,
           {
             headers: {
@@ -131,7 +131,7 @@ function Settings() {
     async () => {
       try {
         await axios.put(
-          "http://localhost:5000/api/settings/password",
+          "http://gunnu-dashboard.onrender.com/api/settings/password",
           pass,
           {
             headers: {

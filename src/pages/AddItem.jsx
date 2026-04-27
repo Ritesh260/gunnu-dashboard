@@ -45,53 +45,52 @@ const token = localStorage.getItem("token");
     handleImage(file);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const data = new FormData();
+    const data = new FormData();
 
-      data.append("name", form.name);
-      data.append("category", form.category);
-      data.append("price", form.price);
-      data.append("type", form.type);
+    data.append("name", form.name);
+    data.append("category", form.category);
+    data.append("price", form.price);
+    data.append("type", form.type);
 
-      if (image) {
-        data.append("image", image);
-      }
-
-      await axios.post(
-  "http://localhost:5000/api/menu/add",
-  data,
-  {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "multipart/form-data",
-    },
-  }
-);
-
-      toast.success("Item Added Successfully 🔥");
-
-      setForm({
-        name: "",
-        category: "",
-        price: "",
-        type: "veg",
-      });
-
-      setImage(null);
-      setPreview(null);
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to Add Item");
-    } finally {
-      setLoading(false);
+    if (image) {
+      data.append("image", image);
     }
-  };
 
+    await axios.post(
+      "https://gunnu-dashboard.onrender.com/api/menu/add",
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    toast.success("Item Added Successfully 🔥");
+
+    setForm({
+      name: "",
+      category: "",
+      price: "",
+      type: "veg",
+    });
+
+    setImage(null);
+    setPreview(null);
+  } catch (error) {
+    console.log(error);
+    toast.error("Failed to Add Item");
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-950 text-black dark:text-white px-3 sm:px-5 lg:px-8 py-4 sm:py-6 overflow-x-hidden w-full">
 

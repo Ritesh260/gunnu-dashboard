@@ -28,32 +28,32 @@ function Login() {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const res =
-        await axios.post(
-          "http://localhost:5000/api/auth/login",
-          form
-        );
-
-      localStorage.setItem(
-        "token",
-        res.data.token
+    const res =
+      await axios.post(
+        "https://gunnu-dashboard.onrender.com/api/auth/login",
+        form
       );
 
-      navigate("/");
-    } catch (error) {
-      alert(
-        "Invalid Email or Password"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+    localStorage.setItem(
+      "token",
+      res.data.token
+    );
+
+    navigate("/");
+  } catch (error) {
+    alert(
+      "Invalid Email or Password"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-950 flex items-center justify-center px-4 py-8">
