@@ -10,7 +10,7 @@ import {
 function Navbar() {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-
+console.log(token);
   const [admin, setAdmin] = useState(null);
   const [open, setOpen] = useState(false);
 

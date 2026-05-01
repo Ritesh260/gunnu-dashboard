@@ -11,7 +11,6 @@ const authMiddleware = (req, res, next) => {
       });
     }
 
-    // 🔥 FIX: remove "Bearer "
     const token = authHeader.split(" ")[1];
 
     if (!token) {
@@ -21,15 +20,19 @@ const authMiddleware = (req, res, next) => {
       });
     }
 
-    const verifyToken = jwt.verify(
+    const decoded = jwt.verify(
       token,
       process.env.JWT_SECRET
     );
 
-    req.user = verifyToken;
+    console.log(decoded);
+
+    req.user = decoded;
 
     next();
   } catch (error) {
+    console.log(error);
+
     return res.status(401).json({
       success: false,
       message: "Invalid Token",
