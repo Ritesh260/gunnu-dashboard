@@ -9,6 +9,7 @@ import {
   FaCog,
   FaStoreAlt,
   FaListUl,
+  FaImages,
   FaChevronDown,
   FaChevronUp,
   FaBars,
@@ -26,15 +27,13 @@ function Sidebar() {
     return localStorage.getItem("theme") === "dark";
   });
 
-  /* DARK MODE */
+  /* DARK MODE SYNC */
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark");
-      document.body.classList.add("dark");
       localStorage.setItem("theme", "dark");
     } else {
       document.documentElement.classList.remove("dark");
-      document.body.classList.remove("dark");
       localStorage.setItem("theme", "light");
     }
   }, [darkMode]);
@@ -42,7 +41,7 @@ function Sidebar() {
   const navStyle = ({ isActive }) =>
     `flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${
       isActive
-        ? "bg-orange-500 text-white"
+        ? "bg-orange-500 text-white shadow-md"
         : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-orange-500"
     }`;
 
@@ -55,8 +54,8 @@ function Sidebar() {
 
   return (
     <>
-      {/* MOBILE TOPBAR */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 z-40 h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 flex items-center justify-between">
+      {/* MOBILE TOP BAR */}
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 h-16 bg-white dark:bg-gray-900 border-b dark:border-gray-800 flex items-center justify-between px-4">
 
         <h1 className="text-lg font-bold text-orange-500">
           Gunnu Admin
@@ -64,18 +63,12 @@ function Sidebar() {
 
         <div className="flex items-center gap-4">
 
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className="text-orange-500 text-lg"
-          >
-            {darkMode ? <FaSun /> : <FaMoon />}
+          <button onClick={() => setDarkMode(!darkMode)}>
+            {darkMode ? <FaSun className="text-orange-500" /> : <FaMoon />}
           </button>
 
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="text-orange-500 text-lg"
-          >
-            <FaBars />
+          <button onClick={() => setSidebarOpen(true)}>
+            <FaBars className="text-orange-500 text-xl" />
           </button>
 
         </div>
@@ -91,35 +84,31 @@ function Sidebar() {
 
       {/* SIDEBAR */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-screen w-72 lg:w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 p-5 transition-all duration-300 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0`}
+        className={`fixed top-0 left-0 z-50 h-screen w-72 bg-white dark:bg-gray-900 border-r dark:border-gray-800 p-5 transition-transform duration-300
+        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
       >
+
         {/* HEADER */}
-        <div className="flex justify-between items-center mb-10">
+        <div className="flex justify-between items-center mb-8">
 
           <div>
             <h1 className="text-2xl font-bold text-orange-500">
               Gunnu Admin
             </h1>
-
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               Restaurant Dashboard
             </p>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex items-center gap-3">
 
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="text-orange-500"
-            >
+            <button onClick={() => setDarkMode(!darkMode)}>
               {darkMode ? <FaSun /> : <FaMoon />}
             </button>
 
             <button
+              className="lg:hidden text-orange-500 text-xl"
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden text-orange-500 text-lg"
             >
               <FaTimes />
             </button>
@@ -128,15 +117,11 @@ function Sidebar() {
         </div>
 
         {/* MENU */}
-        <ul className="space-y-3">
+        <ul className="space-y-2">
 
-          {/* Dashboard */}
+          {/* DASHBOARD */}
           <li>
-            <NavLink
-              to="/"
-              className={navStyle}
-              onClick={() => setSidebarOpen(false)}
-            >
+            <NavLink to="/" className={navStyle} onClick={() => setSidebarOpen(false)}>
               <FaHome />
               Dashboard
             </NavLink>
@@ -154,22 +139,13 @@ function Sidebar() {
                 Menu Items
               </div>
 
-              {menuOpen ? (
-                <FaChevronUp size={12} />
-              ) : (
-                <FaChevronDown size={12} />
-              )}
+              {menuOpen ? <FaChevronUp /> : <FaChevronDown />}
             </button>
 
             {menuOpen && (
-              <div className="mt-2 space-y-2">
+              <div className="mt-2 space-y-1">
 
-                <NavLink
-                  to="/menu"
-                  end
-                  className={subNavStyle}
-                  onClick={() => setSidebarOpen(false)}
-                >
+                <NavLink to="/menu" className={subNavStyle} onClick={() => setSidebarOpen(false)}>
                   <FaListUl />
                   Menu List
                 </NavLink>
@@ -179,13 +155,17 @@ function Sidebar() {
 
           </li>
 
-          {/* ADMIN OWNER PAGE */}
+          {/* GALLERY (NEW ✨) */}
           <li>
-            <NavLink
-              to="/owner"
-              className={navStyle}
-              onClick={() => setSidebarOpen(false)}
-            >
+            <NavLink to="/gallery" className={navStyle} onClick={() => setSidebarOpen(false)}>
+              <FaImages />
+              Gallery
+            </NavLink>
+          </li>
+
+          {/* OWNER */}
+          <li>
+            <NavLink to="/owner" className={navStyle} onClick={() => setSidebarOpen(false)}>
               <FaUserTie />
               Admin Owner
             </NavLink>
@@ -193,11 +173,7 @@ function Sidebar() {
 
           {/* SETTINGS */}
           <li>
-            <NavLink
-              to="/settings"
-              className={navStyle}
-              onClick={() => setSidebarOpen(false)}
-            >
+            <NavLink to="/settings" className={navStyle} onClick={() => setSidebarOpen(false)}>
               <FaCog />
               Settings
             </NavLink>
@@ -209,19 +185,11 @@ function Sidebar() {
         <div className="absolute bottom-5 left-5 right-5 bg-gray-100 dark:bg-gray-800 rounded-2xl p-4">
 
           <div className="flex items-center gap-3">
-
             <FaStoreAlt className="text-orange-500" />
-
             <div>
-              <h3 className="font-semibold text-sm text-gray-900 dark:text-white">
-                Live Store
-              </h3>
-
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                Gunnu Chinese Corner
-              </p>
+              <h3 className="text-sm font-semibold">Live Store</h3>
+              <p className="text-xs text-gray-500">Gunnu Chinese Corner</p>
             </div>
-
           </div>
 
         </div>

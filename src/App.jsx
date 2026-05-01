@@ -11,7 +11,7 @@ import Settings from "./pages/Settings";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import { Routes, Route, Outlet } from "react-router-dom";
-
+import GalleryAdmin from "./pages/GalleryAdmin";
 import { Toaster } from "react-hot-toast";
 
 function Layout() {
@@ -50,6 +50,7 @@ function App() {
           <Route path="menu/edit/:id" element={<EditItem />} />
           <Route path="owner" element={<AdminOwner />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="/gallery" element={<GalleryAdmin />} />
         </Route>
 
         {/* 404 */}

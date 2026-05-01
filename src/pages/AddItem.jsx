@@ -220,23 +220,54 @@ function AddItem() {
             </div>
 
             {/* TAG */}
+            {/* TAG */}
             <div>
-              <label className="block mb-2 text-sm font-medium">
+              <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Tag
               </label>
 
-              <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-3 sm:px-4">
-                <FiTag className="text-gray-500 shrink-0" />
+              <div className="relative">
 
-                <input
-                  type="text"
+                <FiTag className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 z-10" />
+
+                <select
                   name="tag"
-                  placeholder="Best Seller"
                   value={form.tag}
                   onChange={handleChange}
-                  className="w-full bg-transparent p-3 sm:p-4 outline-none"
                   required
-                />
+                  className="
+        w-full
+        appearance-none
+        bg-white dark:bg-gray-800
+        border border-gray-200 dark:border-gray-700
+        text-gray-800 dark:text-white
+        rounded-2xl
+        pl-12 pr-12
+        py-4
+        outline-none
+        transition-all
+        duration-300
+        focus:ring-2
+        focus:ring-orange-500
+        focus:border-orange-500
+        hover:border-orange-400
+        shadow-sm
+      "
+                >
+                  <option value="">Select Tag</option>
+                  <option value="Popular">🔥 Popular</option>
+                  <option value="Hot">🌶 Hot</option>
+                  <option value="Best Seller">⭐ Best Seller</option>
+                  <option value="Chef Special">👨‍🍳 Chef Special</option>
+                  <option value="Trending">📈 Trending</option>
+                  <option value="New">🆕 New</option>
+                </select>
+
+                {/* Custom Arrow */}
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                  ▼
+                </div>
+
               </div>
             </div>
 
@@ -284,23 +315,48 @@ function AddItem() {
             </div>
 
             {/* FOOD TYPE */}
+            {/* FOOD TYPE */}
             <div>
-              <label className="block mb-2 text-sm font-medium">
+              <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 Food Type
               </label>
 
-              <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-3 sm:px-4">
-                <FiTag className="text-gray-500 shrink-0" />
+              <div className="relative">
+
+                <FiTag className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 z-10" />
 
                 <select
                   name="type"
                   value={form.type}
                   onChange={handleChange}
-                  className="w-full bg-transparent p-3 sm:p-4 outline-none"
+                  className="
+        w-full
+        appearance-none
+        bg-white dark:bg-gray-800
+        border border-gray-200 dark:border-gray-700
+        text-gray-800 dark:text-white
+        rounded-2xl
+        pl-12 pr-12
+        py-4
+        outline-none
+        transition-all
+        duration-300
+        focus:ring-2
+        focus:ring-orange-500
+        focus:border-orange-500
+        hover:border-orange-400
+        shadow-sm
+      "
                 >
-                  <option value="veg">Veg</option>
-                  <option value="nonveg">Non Veg</option>
+                  <option value="veg">🥗 Veg</option>
+                  <option value="nonveg">🍗 Non Veg</option>
                 </select>
+
+                {/* Custom Arrow */}
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                  ▼
+                </div>
+
               </div>
             </div>
 

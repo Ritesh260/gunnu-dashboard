@@ -3,33 +3,40 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
+const fs = require("fs"); // 👈 ADD THIS
+
 const app = express();
+
+/* CREATE UPLOADS FOLDER */
+const uploadPath = "uploads";
+if (!fs.existsSync(uploadPath)) {
+  fs.mkdirSync(uploadPath);
+}
 
 /* ROUTES */
 const menuRoutes = require("./routes/menuRoutes");
 const ownerRoutes = require("./routes/ownerRoutes");
 const authRoutes = require("./routes/authRoutes");
 const settingsRoutes = require("./routes/settingsRoutes");
+const galleryRoutes = require("./routes/galleryRoutes");
 
 /* MIDDLEWARE */
 app.use(cors());
 app.use(express.json());
-
-/* STATIC IMAGE */
-app.use("/uploads", express.static("uploads"));
 
 /* API ROUTES */
 app.use("/api/auth", authRoutes);
 app.use("/api/menu", menuRoutes);
 app.use("/api/owner", ownerRoutes);
 app.use("/api/settings", settingsRoutes);
+app.use("/api/gallery", galleryRoutes);
 
 /* TEST */
 app.get("/", (req, res) => {
   res.send("Backend Running...");
 });
 
-/* DATABASE + SERVER START */
+/* DB */
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
@@ -39,6 +46,4 @@ mongoose
       console.log("Server running...");
     });
   })
-  .catch((err) => {
-    console.log("Mongo Error:", err);
-  });
+  .catch((err) => console.log(err));
