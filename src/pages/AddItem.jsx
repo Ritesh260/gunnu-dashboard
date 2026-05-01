@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+
 import {
   FiUploadCloud,
   FiTag,
   FiGrid,
   FiCoffee,
+  FiFileText,
+  FiStar,
 } from "react-icons/fi";
 
 import {
@@ -17,14 +20,23 @@ function AddItem() {
   const [form, setForm] = useState({
     name: "",
     category: "",
+    description: "",
+    tag: "",
+    rating: 5,
     price: "",
     type: "veg",
   });
 
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
+
   const [loading, setLoading] = useState(false);
-const token = localStorage.getItem("token");
+
+  const token = localStorage.getItem("token");
+
+  /* =========================
+      HANDLE CHANGE
+  ========================= */
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -32,6 +44,9 @@ const token = localStorage.getItem("token");
     });
   };
 
+  /* =========================
+      HANDLE IMAGE
+  ========================= */
   const handleImage = (file) => {
     if (!file) return;
 
@@ -39,62 +54,79 @@ const token = localStorage.getItem("token");
     setPreview(URL.createObjectURL(file));
   };
 
+  /* =========================
+      DRAG DROP
+  ========================= */
   const handleDrop = (e) => {
     e.preventDefault();
+
     const file = e.dataTransfer.files[0];
+
     handleImage(file);
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  /* =========================
+      SUBMIT
+  ========================= */
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const data = new FormData();
+      const data = new FormData();
 
-    data.append("name", form.name);
-    data.append("category", form.category);
-    data.append("price", form.price);
-    data.append("type", form.type);
+      data.append("name", form.name);
+      data.append("category", form.category);
+      data.append("description", form.description);
+      data.append("tag", form.tag);
+      data.append("rating", form.rating);
+      data.append("price", form.price);
+      data.append("type", form.type);
 
-    if (image) {
-      data.append("image", image);
-    }
-
-    await axios.post(
-      "https://gunnu-dashboard.onrender.com/api/menu/add",
-      data,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
+      if (image) {
+        data.append("image", image);
       }
-    );
 
-    toast.success("Item Added Successfully 🔥");
+      await axios.post(
+        "https://gunnu-dashboard.onrender.com/api/menu/add",
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-    setForm({
-      name: "",
-      category: "",
-      price: "",
-      type: "veg",
-    });
+      toast.success("Item Added Successfully 🔥");
 
-    setImage(null);
-    setPreview(null);
-  } catch (error) {
-    console.log(error);
-    toast.error("Failed to Add Item");
-  } finally {
-    setLoading(false);
-  }
-};
+      setForm({
+        name: "",
+        category: "",
+        description: "",
+        tag: "",
+        rating: 5,
+        price: "",
+        type: "veg",
+      });
+
+      setImage(null);
+      setPreview(null);
+
+    } catch (error) {
+      console.log(error);
+
+      toast.error("Failed to Add Item");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-950 text-black dark:text-white px-3 sm:px-5 lg:px-8 py-4 sm:py-6 overflow-x-hidden w-full">
 
-      {/* Full Width Header Mobile */}
+      {/* Header */}
       <div className="w-full mb-6 sm:mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 
         <div className="w-full">
@@ -113,7 +145,7 @@ const token = localStorage.getItem("token");
 
       </div>
 
-      {/* Main Card Full Width */}
+      {/* Main Card */}
       <div className="w-full bg-white dark:bg-gray-900 rounded-2xl sm:rounded-3xl border border-gray-200 dark:border-gray-800 shadow-xl overflow-hidden">
 
         <form
@@ -121,16 +153,16 @@ const token = localStorage.getItem("token");
           className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 w-full"
         >
 
-          {/* Left Side */}
+          {/* LEFT SIDE */}
           <div className="space-y-5 sm:space-y-6 w-full">
 
-            {/* Name */}
-            <div className="w-full">
+            {/* NAME */}
+            <div>
               <label className="block mb-2 text-sm font-medium">
                 Item Name
               </label>
 
-              <div className="w-full flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-3 sm:px-4">
+              <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-3 sm:px-4">
                 <FiCoffee className="text-gray-500 shrink-0" />
 
                 <input
@@ -145,19 +177,19 @@ const token = localStorage.getItem("token");
               </div>
             </div>
 
-            {/* Category */}
-            <div className="w-full">
+            {/* CATEGORY */}
+            <div>
               <label className="block mb-2 text-sm font-medium">
                 Category
               </label>
 
-              <div className="w-full flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-3 sm:px-4">
+              <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-3 sm:px-4">
                 <FiGrid className="text-gray-500 shrink-0" />
 
                 <input
                   type="text"
                   name="category"
-                  placeholder="Chinese / Indian"
+                  placeholder="Chinese"
                   value={form.category}
                   onChange={handleChange}
                   className="w-full bg-transparent p-3 sm:p-4 outline-none"
@@ -166,13 +198,77 @@ const token = localStorage.getItem("token");
               </div>
             </div>
 
-            {/* Price */}
-            <div className="w-full">
+            {/* DESCRIPTION */}
+            <div>
+              <label className="block mb-2 text-sm font-medium">
+                Description
+              </label>
+
+              <div className="flex items-start bg-gray-100 dark:bg-gray-800 rounded-xl px-3 sm:px-4">
+                <FiFileText className="text-gray-500 shrink-0 mt-4" />
+
+                <textarea
+                  name="description"
+                  rows="4"
+                  placeholder="Fresh ingredients, premium sauces and perfect flavor in every bite."
+                  value={form.description}
+                  onChange={handleChange}
+                  className="w-full bg-transparent p-3 sm:p-4 outline-none resize-none"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* TAG */}
+            <div>
+              <label className="block mb-2 text-sm font-medium">
+                Tag
+              </label>
+
+              <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-3 sm:px-4">
+                <FiTag className="text-gray-500 shrink-0" />
+
+                <input
+                  type="text"
+                  name="tag"
+                  placeholder="Best Seller"
+                  value={form.tag}
+                  onChange={handleChange}
+                  className="w-full bg-transparent p-3 sm:p-4 outline-none"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* RATING */}
+            <div>
+              <label className="block mb-2 text-sm font-medium">
+                Rating
+              </label>
+
+              <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-3 sm:px-4">
+                <FiStar className="text-gray-500 shrink-0" />
+
+                <input
+                  type="number"
+                  name="rating"
+                  min="1"
+                  max="5"
+                  step="0.1"
+                  value={form.rating}
+                  onChange={handleChange}
+                  className="w-full bg-transparent p-3 sm:p-4 outline-none"
+                />
+              </div>
+            </div>
+
+            {/* PRICE */}
+            <div>
               <label className="block mb-2 text-sm font-medium">
                 Price
               </label>
 
-              <div className="w-full flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-3 sm:px-4">
+              <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-3 sm:px-4">
                 <FaRupeeSign className="text-gray-500 shrink-0" />
 
                 <input
@@ -187,13 +283,13 @@ const token = localStorage.getItem("token");
               </div>
             </div>
 
-            {/* Type */}
-            <div className="w-full">
+            {/* FOOD TYPE */}
+            <div>
               <label className="block mb-2 text-sm font-medium">
                 Food Type
               </label>
 
-              <div className="w-full flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-3 sm:px-4">
+              <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-3 sm:px-4">
                 <FiTag className="text-gray-500 shrink-0" />
 
                 <select
@@ -208,7 +304,7 @@ const token = localStorage.getItem("token");
               </div>
             </div>
 
-            {/* Mobile Button Full Width */}
+            {/* MOBILE BUTTON */}
             <button
               type="submit"
               disabled={loading}
@@ -219,7 +315,7 @@ const token = localStorage.getItem("token");
 
           </div>
 
-          {/* Right Side */}
+          {/* RIGHT SIDE */}
           <div className="w-full">
 
             <label className="block mb-2 text-sm font-medium">
@@ -227,9 +323,7 @@ const token = localStorage.getItem("token");
             </label>
 
             <label
-              onDragOver={(e) =>
-                e.preventDefault()
-              }
+              onDragOver={(e) => e.preventDefault()}
               onDrop={handleDrop}
               className="w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl min-h-[250px] sm:min-h-[320px] flex flex-col justify-center items-center text-center cursor-pointer hover:border-orange-500 transition overflow-hidden bg-gray-50 dark:bg-gray-800 p-4"
             >
@@ -239,9 +333,7 @@ const token = localStorage.getItem("token");
                 hidden
                 accept="image/*"
                 onChange={(e) =>
-                  handleImage(
-                    e.target.files[0]
-                  )
+                  handleImage(e.target.files[0])
                 }
               />
 
@@ -277,7 +369,7 @@ const token = localStorage.getItem("token");
               </div>
             )}
 
-            {/* Desktop Button */}
+            {/* DESKTOP BUTTON */}
             <button
               type="submit"
               disabled={loading}

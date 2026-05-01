@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /* ===========================
-   ADD ITEM (Protected)
+   ADD ITEM
 =========================== */
 router.post(
   "/add",
@@ -29,11 +29,14 @@ router.post(
       const newItem = new Menu({
         name: req.body.name,
         category: req.body.category,
+        description: req.body.description,
+        tag: req.body.tag,
         price: req.body.price,
         type: req.body.type,
+        rating: req.body.rating || 5,
 
         image: req.file
-          ? `http://localhost:5000/uploads/${req.file.filename}`
+          ? `https://gunnu-dashboard.onrender.com/uploads/${req.file.filename}`
           : "",
       });
 
@@ -94,7 +97,7 @@ router.get("/:id", async (req, res) => {
 });
 
 /* ===========================
-   UPDATE ITEM (Protected)
+   UPDATE ITEM
 =========================== */
 router.put(
   "/:id",
@@ -105,13 +108,16 @@ router.put(
       const updateData = {
         name: req.body.name,
         category: req.body.category,
+        description: req.body.description,
+        tag: req.body.tag,
         price: req.body.price,
         type: req.body.type,
+        rating: req.body.rating,
       };
 
       if (req.file) {
         updateData.image =
-          `http://localhost:5000/uploads/${req.file.filename}`;
+          `https://gunnu-dashboard.onrender.com/uploads/${req.file.filename}`;
       }
 
       const updatedItem =
@@ -136,7 +142,7 @@ router.put(
 );
 
 /* ===========================
-   DELETE ITEM (Protected)
+   DELETE ITEM
 =========================== */
 router.delete(
   "/:id",

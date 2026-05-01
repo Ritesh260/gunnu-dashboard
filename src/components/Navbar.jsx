@@ -21,7 +21,7 @@ function Navbar() {
   const fetchAdmin = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/settings/profile",
+         "https://gunnu-dashboard.onrender.com/api/settings/profile",
         {
           headers: {
             Authorization: `Bearer ${token}`,
