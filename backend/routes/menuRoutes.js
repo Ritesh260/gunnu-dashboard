@@ -3,13 +3,15 @@ const router = express.Router();
 const multer = require("multer");
 const Menu = require("../models/Menu");
 const authMiddleware = require("../middleware/authMiddleware");
+const cloudinary = require("../config/cloudinary");
 
-/* Upload Config */
+/* =========================
+   MULTER (TEMP STORAGE)
+========================= */
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads/");
   },
-
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);
   },
@@ -17,15 +19,23 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-/* ===========================
+/* =========================
    ADD ITEM
-=========================== */
+========================= */
 router.post(
   "/add",
   authMiddleware,
   upload.single("image"),
   async (req, res) => {
     try {
+      let imageUrl = "";
+
+      // 👉 upload image to cloudinary
+      if (req.file) {
+        const result = await cloudinary.uploader.upload(req.file.path);
+        imageUrl = result.secure_url;
+      }
+
       const newItem = new Menu({
         name: req.body.name,
         category: req.body.category,
@@ -34,10 +44,7 @@ router.post(
         price: req.body.price,
         type: req.body.type,
         rating: req.body.rating || 5,
-
-        image: req.file
-          ? `https://gunnu-dashboard.onrender.com/uploads/${req.file.filename}`
-          : "",
+        image: imageUrl,
       });
 
       await newItem.save();
@@ -48,6 +55,7 @@ router.post(
         data: newItem,
       });
     } catch (error) {
+      console.log(error);
       res.status(500).json({
         success: false,
         error: error.message,
@@ -56,14 +64,12 @@ router.post(
   }
 );
 
-/* ===========================
+/* =========================
    GET ALL ITEMS
-=========================== */
+========================= */
 router.get("/", async (req, res) => {
   try {
-    const items = await Menu.find().sort({
-      createdAt: -1,
-    });
+    const items = await Menu.find().sort({ createdAt: -1 });
 
     res.json(items);
   } catch (error) {
@@ -73,9 +79,9 @@ router.get("/", async (req, res) => {
   }
 });
 
-/* ===========================
+/* =========================
    GET SINGLE ITEM
-=========================== */
+========================= */
 router.get("/:id", async (req, res) => {
   try {
     const item = await Menu.findById(req.params.id);
@@ -96,9 +102,9 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-/* ===========================
+/* =========================
    UPDATE ITEM
-=========================== */
+========================= */
 router.put(
   "/:id",
   authMiddleware,
@@ -115,17 +121,17 @@ router.put(
         rating: req.body.rating,
       };
 
+      // 👉 if new image uploaded
       if (req.file) {
-        updateData.image =
-          `https://gunnu-dashboard.onrender.com/uploads/${req.file.filename}`;
+        const result = await cloudinary.uploader.upload(req.file.path);
+        updateData.image = result.secure_url;
       }
 
-      const updatedItem =
-        await Menu.findByIdAndUpdate(
-          req.params.id,
-          updateData,
-          { new: true }
-        );
+      const updatedItem = await Menu.findByIdAndUpdate(
+        req.params.id,
+        updateData,
+        { new: true }
+      );
 
       res.json({
         success: true,
@@ -141,9 +147,9 @@ router.put(
   }
 );
 
-/* ===========================
+/* =========================
    DELETE ITEM
-=========================== */
+========================= */
 router.delete(
   "/:id",
   authMiddleware,
