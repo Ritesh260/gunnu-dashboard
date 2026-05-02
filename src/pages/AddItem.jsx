@@ -349,7 +349,7 @@ function AddItem() {
       "
                 >
                   <option value="veg">🥗 Veg</option>
-                  <option value="nonveg">🍗 Non Veg</option>
+                  <option value="non-veg">🍗 Non Veg</option>
                 </select>
 
                 {/* Custom Arrow */}

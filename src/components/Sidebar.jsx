@@ -10,6 +10,7 @@ import {
   FaStoreAlt,
   FaListUl,
   FaImages,
+  FaFire,
   FaChevronDown,
   FaChevronUp,
   FaBars,
@@ -95,6 +96,7 @@ function Sidebar() {
             <h1 className="text-2xl font-bold text-orange-500">
               Gunnu Admin
             </h1>
+
             <p className="text-xs text-gray-500 dark:text-gray-400">
               Restaurant Dashboard
             </p>
@@ -121,7 +123,11 @@ function Sidebar() {
 
           {/* DASHBOARD */}
           <li>
-            <NavLink to="/" className={navStyle} onClick={() => setSidebarOpen(false)}>
+            <NavLink
+              to="/"
+              className={navStyle}
+              onClick={() => setSidebarOpen(false)}
+            >
               <FaHome />
               Dashboard
             </NavLink>
@@ -145,7 +151,11 @@ function Sidebar() {
             {menuOpen && (
               <div className="mt-2 space-y-1">
 
-                <NavLink to="/menu" className={subNavStyle} onClick={() => setSidebarOpen(false)}>
+                <NavLink
+                  to="/menu"
+                  className={subNavStyle}
+                  onClick={() => setSidebarOpen(false)}
+                >
                   <FaListUl />
                   Menu List
                 </NavLink>
@@ -155,9 +165,25 @@ function Sidebar() {
 
           </li>
 
-          {/* GALLERY (NEW ✨) */}
+          {/* SPECIALS */}
           <li>
-            <NavLink to="/gallery" className={navStyle} onClick={() => setSidebarOpen(false)}>
+            <NavLink
+              to="/specials"
+              className={navStyle}
+              onClick={() => setSidebarOpen(false)}
+            >
+              <FaFire />
+              Today's Specials
+            </NavLink>
+          </li>
+
+          {/* GALLERY */}
+          <li>
+            <NavLink
+              to="/gallery"
+              className={navStyle}
+              onClick={() => setSidebarOpen(false)}
+            >
               <FaImages />
               Gallery
             </NavLink>
@@ -165,7 +191,11 @@ function Sidebar() {
 
           {/* OWNER */}
           <li>
-            <NavLink to="/owner" className={navStyle} onClick={() => setSidebarOpen(false)}>
+            <NavLink
+              to="/owner"
+              className={navStyle}
+              onClick={() => setSidebarOpen(false)}
+            >
               <FaUserTie />
               Admin Owner
             </NavLink>
@@ -173,7 +203,11 @@ function Sidebar() {
 
           {/* SETTINGS */}
           <li>
-            <NavLink to="/settings" className={navStyle} onClick={() => setSidebarOpen(false)}>
+            <NavLink
+              to="/settings"
+              className={navStyle}
+              onClick={() => setSidebarOpen(false)}
+            >
               <FaCog />
               Settings
             </NavLink>
@@ -186,9 +220,15 @@ function Sidebar() {
 
           <div className="flex items-center gap-3">
             <FaStoreAlt className="text-orange-500" />
+
             <div>
-              <h3 className="text-sm font-semibold">Live Store</h3>
-              <p className="text-xs text-gray-500">Gunnu Chinese Corner</p>
+              <h3 className="text-sm font-semibold">
+                Live Store
+              </h3>
+
+              <p className="text-xs text-gray-500">
+                Gunnu Chinese Corner
+              </p>
             </div>
           </div>
 
