@@ -236,7 +236,7 @@ function SpecialAdmin() {
             className="p-4 rounded-2xl bg-gray-100 dark:bg-gray-800 outline-none"
           >
             <option value="veg">Veg</option>
-            <option value="nonveg">Non Veg</option>
+            <option value="non-veg">Non Veg</option>
           </select>
 
           <input
