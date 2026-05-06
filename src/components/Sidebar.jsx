@@ -18,6 +18,7 @@ import {
   FaMoon,
   FaSun,
   FaUserTie,
+  FaStar
 } from "react-icons/fa";
 
 function Sidebar() {
@@ -188,7 +189,17 @@ function Sidebar() {
               Gallery
             </NavLink>
           </li>
-
+{/* REVIEWS */}
+<li>
+  <NavLink
+    to="/reviews"
+    className={navStyle}
+    onClick={() => setSidebarOpen(false)}
+  >
+    <FaStar />
+    Reviews
+  </NavLink>
+</li>
           {/* OWNER */}
           <li>
             <NavLink

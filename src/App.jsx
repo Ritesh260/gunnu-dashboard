@@ -10,7 +10,7 @@ import Login from "./pages/Login";
 import Settings from "./pages/Settings";
 import GalleryAdmin from "./pages/GalleryAdmin";
 import SpecialsAdmin from "./pages/SpecialAdmin"; 
-
+import AdminReviews from "./pages/AdminReviews";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import { Routes, Route, Outlet } from "react-router-dom";
@@ -67,7 +67,8 @@ function App() {
 
           {/* OWNER */}
           <Route path="owner" element={<AdminOwner />} />
-
+{/* REVIEWS */}
+<Route path="reviews" element={<AdminReviews />} />
           {/* SETTINGS */}
           <Route path="settings" element={<Settings />} />
 
