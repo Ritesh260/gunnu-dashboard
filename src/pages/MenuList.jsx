@@ -9,6 +9,8 @@ import {
   FaTimes,
   FaPlus,
   FaStar,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa";
 
 import { Link } from "react-router-dom";
@@ -17,6 +19,19 @@ function MenuList() {
   const [items, setItems] = useState([]);
   const [viewItem, setViewItem] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  /* ================= PAGINATION ================= */
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const itemsPerPage = 10;
+
+  const totalPages = Math.ceil(items.length / itemsPerPage);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+
+  const endIndex = startIndex + itemsPerPage;
+
+  const currentItems = items.slice(startIndex, endIndex);
 
   const token = localStorage.getItem("token");
 
@@ -34,17 +49,12 @@ function MenuList() {
       );
 
       setItems(res.data);
-
     } catch (error) {
-
       console.log(error);
 
       toast.error("Failed to fetch menu");
-
     } finally {
-
       setLoading(false);
-
     }
   };
 
@@ -52,7 +62,6 @@ function MenuList() {
       DELETE ITEM
   ========================= */
   const deleteItem = async (id) => {
-
     const confirmDelete = window.confirm(
       "Delete this item?"
     );
@@ -60,7 +69,6 @@ function MenuList() {
     if (!confirmDelete) return;
 
     try {
-
       await axios.delete(
         `https://gunnu-dashboard.onrender.com/api/menu/${id}`,
         {
@@ -72,14 +80,15 @@ function MenuList() {
 
       toast.success("Item Deleted Successfully");
 
+      if (currentItems.length === 1 && currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      }
+
       fetchItems();
-
     } catch (error) {
-
       console.log(error);
 
       toast.error("Failed to delete item");
-
     }
   };
 
@@ -101,7 +110,7 @@ function MenuList() {
 
         <Link
           to="/menu/add"
-          className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-xl font-semibold flex items-center gap-2 w-fit"
+          className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-2xl font-semibold flex items-center gap-2 w-fit shadow-lg"
         >
           <FaPlus />
           Add Item
@@ -111,8 +120,10 @@ function MenuList() {
 
       {/* ================= LOADING ================= */}
       {loading && (
-        <div className="text-center mt-20 text-lg font-semibold">
-          Loading...
+        <div className="flex justify-center items-center h-[50vh]">
+
+          <div className="w-14 h-14 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+
         </div>
       )}
 
@@ -130,7 +141,7 @@ function MenuList() {
 
           <Link
             to="/menu/add"
-            className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl font-semibold"
+            className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-2xl font-semibold"
           >
             <FaPlus />
             Add Item
@@ -139,10 +150,11 @@ function MenuList() {
         </div>
       )}
 
-      {/* ================= DESKTOP TABLE ================= */}
+      {/* ================= CONTENT ================= */}
       {!loading && items.length > 0 && (
         <>
-          <div className="hidden xl:block bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm">
+          {/* ================= DESKTOP TABLE ================= */}
+          <div className="hidden xl:block bg-white dark:bg-gray-900 rounded-[30px] border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm">
 
             <table className="w-full text-left">
 
@@ -169,10 +181,10 @@ function MenuList() {
               </thead>
 
               <tbody>
-                {items.map((item) => (
+                {currentItems.map((item) => (
                   <tr
                     key={item._id}
-                    className="border-t border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition"
+                    className="border-t border-gray-200 dark:border-gray-800 hover:bg-orange-50 dark:hover:bg-gray-800/40 transition"
                   >
 
                     {/* IMAGE */}
@@ -180,7 +192,7 @@ function MenuList() {
                       <img
                         src={item.image}
                         alt={item.name}
-                        className="w-16 h-16 rounded-2xl object-cover"
+                        className="w-16 h-16 rounded-2xl object-cover shadow-md"
                       />
                     </td>
 
@@ -245,14 +257,14 @@ function MenuList() {
 
                         <button
                           onClick={() => setViewItem(item)}
-                          className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-xl"
+                          className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-xl transition"
                         >
                           <FaEye />
                         </button>
 
                         <Link
                           to={`/menu/edit/${item._id}`}
-                          className="bg-orange-500 hover:bg-orange-600 text-white p-3 rounded-xl"
+                          className="bg-orange-500 hover:bg-orange-600 text-white p-3 rounded-xl transition"
                         >
                           <FaEdit />
                         </Link>
@@ -261,7 +273,7 @@ function MenuList() {
                           onClick={() =>
                             deleteItem(item._id)
                           }
-                          className="bg-red-500 hover:bg-red-600 text-white p-3 rounded-xl"
+                          className="bg-red-500 hover:bg-red-600 text-white p-3 rounded-xl transition"
                         >
                           <FaTrash />
                         </button>
@@ -279,10 +291,10 @@ function MenuList() {
           {/* ================= MOBILE CARDS ================= */}
           <div className="xl:hidden grid grid-cols-1 md:grid-cols-2 gap-5">
 
-            {items.map((item) => (
+            {currentItems.map((item) => (
               <div
                 key={item._id}
-                className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-3xl overflow-hidden shadow-sm"
+                className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-[30px] overflow-hidden shadow-sm hover:shadow-xl transition"
               >
 
                 {/* IMAGE */}
@@ -291,10 +303,10 @@ function MenuList() {
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-full h-52 object-cover"
+                    className="w-full h-56 object-cover"
                   />
 
-                  <div className="absolute top-4 left-4 bg-orange-500 text-white px-4 py-2 rounded-xl font-bold shadow-lg">
+                  <div className="absolute top-4 left-4 bg-orange-500 text-white px-4 py-2 rounded-2xl font-bold shadow-lg">
                     ₹{item.price}
                   </div>
 
@@ -355,14 +367,14 @@ function MenuList() {
                       onClick={() =>
                         setViewItem(item)
                       }
-                      className="bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-xl flex justify-center"
+                      className="bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-2xl flex justify-center transition"
                     >
                       <FaEye />
                     </button>
 
                     <Link
                       to={`/menu/edit/${item._id}`}
-                      className="bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl flex justify-center"
+                      className="bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-2xl flex justify-center transition"
                     >
                       <FaEdit />
                     </Link>
@@ -371,7 +383,7 @@ function MenuList() {
                       onClick={() =>
                         deleteItem(item._id)
                       }
-                      className="bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl flex justify-center"
+                      className="bg-red-500 hover:bg-red-600 text-white py-3 rounded-2xl flex justify-center transition"
                     >
                       <FaTrash />
                     </button>
@@ -384,159 +396,224 @@ function MenuList() {
             ))}
 
           </div>
+
+          {/* ================= PAGINATION ================= */}
+          <div className="flex justify-center items-center gap-2 mt-10 flex-wrap">
+
+            {/* PREV */}
+            <button
+              disabled={currentPage === 1}
+              onClick={() =>
+                setCurrentPage(currentPage - 1)
+              }
+              className={`flex items-center gap-2 px-5 py-3 rounded-2xl font-semibold transition ${
+                currentPage === 1
+                  ? "bg-gray-200 dark:bg-gray-800 opacity-50 cursor-not-allowed"
+                  : "bg-orange-500 hover:bg-orange-600 text-white shadow-lg"
+              }`}
+            >
+              <FaChevronLeft />
+              Prev
+            </button>
+
+            {/* PAGE NUMBERS */}
+            {[...Array(totalPages)].map((_, index) => {
+              const page = index + 1;
+
+              return (
+                <button
+                  key={page}
+                  onClick={() =>
+                    setCurrentPage(page)
+                  }
+                  className={`w-12 h-12 rounded-2xl font-bold transition ${
+                    currentPage === page
+                      ? "bg-orange-500 text-white shadow-lg scale-105"
+                      : "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 hover:bg-orange-50 dark:hover:bg-gray-800"
+                  }`}
+                >
+                  {page}
+                </button>
+              );
+            })}
+
+            {/* NEXT */}
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() =>
+                setCurrentPage(currentPage + 1)
+              }
+              className={`flex items-center gap-2 px-5 py-3 rounded-2xl font-semibold transition ${
+                currentPage === totalPages
+                  ? "bg-gray-200 dark:bg-gray-800 opacity-50 cursor-not-allowed"
+                  : "bg-orange-500 hover:bg-orange-600 text-white shadow-lg"
+              }`}
+            >
+              Next
+              <FaChevronRight />
+            </button>
+
+          </div>
         </>
       )}
 
       {/* ================= VIEW MODAL ================= */}
-      {viewItem && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+     {/* ================= VIEW MODAL ================= */}
+{viewItem && (
+  <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
 
-          <div className="w-full max-w-lg bg-white dark:bg-gray-900 rounded-3xl overflow-hidden border border-gray-200 dark:border-gray-800 shadow-2xl">
+    {/* MODAL */}
+    <div className="relative w-full max-w-md sm:max-w-xl lg:max-w-2xl bg-white dark:bg-gray-900 rounded-[28px] overflow-hidden shadow-2xl border border-gray-200 dark:border-gray-800 max-h-[95vh] overflow-y-auto animate-[fadeIn_.3s_ease]">
 
-            {/* IMAGE */}
-            <div className="relative">
+      {/* CLOSE BUTTON */}
+      <button
+        onClick={() => setViewItem(null)}
+        className="absolute top-4 right-4 z-20 w-11 h-11 rounded-2xl bg-black/50 hover:bg-red-500 text-white flex items-center justify-center transition-all duration-300"
+      >
+        <FaTimes />
+      </button>
 
-              <img
-                src={viewItem.image}
-                alt={viewItem.name}
-                className="w-full h-72 object-cover"
-              />
+      {/* IMAGE */}
+      <div className="relative">
 
-              {/* CLOSE */}
-              <button
-                onClick={() => setViewItem(null)}
-                className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/50 hover:bg-red-500 text-white flex items-center justify-center transition"
-              >
-                <FaTimes />
-              </button>
+        <img
+          src={viewItem.image}
+          alt={viewItem.name}
+          className="w-full h-56 sm:h-72 lg:h-80 object-cover"
+        />
 
-              {/* PRICE */}
-              <div className="absolute bottom-4 left-4 bg-orange-500 text-white px-5 py-2 rounded-xl font-bold text-lg shadow-lg">
-                ₹{viewItem.price}
-              </div>
+        {/* PRICE */}
+        <div className="absolute bottom-4 left-4 bg-orange-500 text-white px-5 py-2 rounded-2xl font-bold text-lg shadow-xl">
+          ₹{viewItem.price}
+        </div>
 
-            </div>
+      </div>
 
-            {/* CONTENT */}
-            <div className="p-6">
+      {/* CONTENT */}
+      <div className="p-5 sm:p-7">
 
-              {/* TITLE */}
-              <div className="flex items-start justify-between gap-3 mb-4">
+        {/* TITLE */}
+        <div className="flex items-start justify-between gap-3">
 
-                <div>
-                  <h2 className="text-3xl font-bold">
-                    {viewItem.name}
-                  </h2>
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-bold leading-tight">
+              {viewItem.name}
+            </h2>
 
-                  <p className="text-gray-500 dark:text-gray-400 mt-1">
-                    {viewItem.category}
-                  </p>
-                </div>
+            <p className="text-gray-500 dark:text-gray-400 mt-1">
+              {viewItem.category}
+            </p>
+          </div>
 
-                <div className="flex items-center gap-1 text-yellow-500 font-semibold text-lg">
-                  <FaStar />
-                  {viewItem.rating || 5}
-                </div>
+          {/* RATING */}
+          <div className="flex items-center gap-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 px-3 py-2 rounded-xl font-semibold whitespace-nowrap">
+            <FaStar />
+            {viewItem.rating || 5}
+          </div>
 
-              </div>
+        </div>
 
-              {/* BADGES */}
-              <div className="flex flex-wrap gap-3 mb-5">
+        {/* BADGES */}
+        <div className="flex flex-wrap gap-3 mt-5">
 
-                <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 px-4 py-2 rounded-full text-sm font-semibold">
-                  {viewItem.tag || "Popular"}
-                </span>
+          <span className="bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 px-4 py-2 rounded-full text-sm font-semibold">
+            {viewItem.tag || "Popular"}
+          </span>
 
-                <span
-                  className={`px-4 py-2 rounded-full text-sm font-semibold ${
-                    viewItem.type === "veg"
-                      ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400"
-                      : "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400"
-                  }`}
-                >
-                  {viewItem.type === "veg"
-                    ? "Veg Item"
-                    : "Non Veg Item"}
-                </span>
+          <span
+            className={`px-4 py-2 rounded-full text-sm font-semibold ${
+              viewItem.type === "veg"
+                ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400"
+                : "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400"
+            }`}
+          >
+            {viewItem.type === "veg"
+              ? "Veg Item"
+              : "Non Veg Item"}
+          </span>
 
-              </div>
+        </div>
 
-              {/* DESCRIPTION */}
-              <div className="mb-6">
-                <h3 className="font-semibold mb-2">
-                  Description
-                </h3>
+        {/* DESCRIPTION */}
+        <div className="mt-6">
 
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  {viewItem.description}
-                </p>
-              </div>
+          <h3 className="text-lg font-semibold mb-3">
+            Description
+          </h3>
 
-              {/* INFO */}
-              <div className="space-y-4">
+          <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm sm:text-base">
+            {viewItem.description}
+          </p>
 
-                <div className="flex justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-3">
-                  <span className="text-gray-500 dark:text-gray-400">
-                    Category
-                  </span>
+        </div>
 
-                  <span className="font-semibold">
-                    {viewItem.category}
-                  </span>
-                </div>
+        {/* INFO */}
+        <div className="mt-7 space-y-4">
 
-                <div className="flex justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-3">
-                  <span className="text-gray-500 dark:text-gray-400">
-                    Price
-                  </span>
+          <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 pb-3">
 
-                  <span className="font-bold text-orange-500">
-                    ₹{viewItem.price}
-                  </span>
-                </div>
+            <span className="text-gray-500 dark:text-gray-400">
+              Category
+            </span>
 
-                <div className="flex justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-3">
-                  <span className="text-gray-500 dark:text-gray-400">
-                    Rating
-                  </span>
-
-                  <span className="font-semibold">
-                    ⭐ {viewItem.rating || 5}
-                  </span>
-                </div>
-
-              </div>
-
-              {/* BUTTONS */}
-              <div className="grid grid-cols-2 gap-3 mt-7">
-
-                <Link
-                  to={`/menu/edit/${viewItem._id}`}
-                  onClick={() =>
-                    setViewItem(null)
-                  }
-                  className="bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-semibold flex justify-center items-center gap-2"
-                >
-                  <FaEdit />
-                  Edit
-                </Link>
-
-                <button
-                  onClick={() =>
-                    setViewItem(null)
-                  }
-                  className="bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 py-3 rounded-xl font-semibold"
-                >
-                  Close
-                </button>
-
-              </div>
-
-            </div>
+            <span className="font-semibold">
+              {viewItem.category}
+            </span>
 
           </div>
+
+          <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 pb-3">
+
+            <span className="text-gray-500 dark:text-gray-400">
+              Price
+            </span>
+
+            <span className="font-bold text-orange-500 text-lg">
+              ₹{viewItem.price}
+            </span>
+
+          </div>
+
+          <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 pb-3">
+
+            <span className="text-gray-500 dark:text-gray-400">
+              Rating
+            </span>
+
+            <span className="font-semibold">
+              ⭐ {viewItem.rating || 5}
+            </span>
+
+          </div>
+
         </div>
-      )}
+
+        {/* BUTTONS */}
+        <div className="grid grid-cols-2 gap-3 mt-8">
+
+          <Link
+            to={`/menu/edit/${viewItem._id}`}
+            onClick={() => setViewItem(null)}
+            className="bg-orange-500 hover:bg-orange-600 text-white py-3 sm:py-4 rounded-2xl font-semibold flex justify-center items-center gap-2 transition-all duration-300"
+          >
+            <FaEdit />
+            Edit
+          </Link>
+
+          <button
+            onClick={() => setViewItem(null)}
+            className="bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 py-3 sm:py-4 rounded-2xl font-semibold transition-all duration-300"
+          >
+            Close
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+)}
     </div>
   );
 }
