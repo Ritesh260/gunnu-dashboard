@@ -215,7 +215,7 @@ function AddItem() {
       });
 
       await axios.post(
-       "https://gunnu-dashboard.onrender.com/api/menu",
+       "https://gunnu-dashboard.onrender.com/api/menu/add",
         data,
         {
           headers: {
