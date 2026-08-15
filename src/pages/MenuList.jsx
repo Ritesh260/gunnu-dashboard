@@ -42,21 +42,34 @@ function MenuList() {
     fetchItems();
   }, []);
 
-  const fetchItems = async () => {
-    try {
-      const res = await axios.get(
-        "https://gunnu-dashboard.onrender.com/api/menu"
-      );
+ const fetchItems = async () => {
+  try {
+    setLoading(true);
 
+    const res = await axios.get(
+      "https://gunnu-dashboard.onrender.com/api/menu"
+    );
+
+    console.log("Menu API Response:", res.data);
+
+    if (Array.isArray(res.data)) {
       setItems(res.data);
-    } catch (error) {
-      console.log(error);
-
-      toast.error("Failed to fetch menu");
-    } finally {
-      setLoading(false);
+    } else if (Array.isArray(res.data.data)) {
+      setItems(res.data.data);
+    } else {
+      setItems([]);
     }
-  };
+
+  } catch (error) {
+    console.log("Menu Fetch Error:", error);
+
+    toast.error("Failed to fetch menu");
+    setItems([]);
+
+  } finally {
+    setLoading(false);
+  }
+};
 
   /* ================= DELETE ================= */
 
@@ -93,13 +106,43 @@ function MenuList() {
 
   /* ================= PRICE HELPERS ================= */
 
-  const getFullPrice = (item) => {
-    return item.fullPrice ?? item.price ?? null;
-  };
+const getFullPrice = (item) => {
+  // New backend format
+  if (item?.price && typeof item.price === "object") {
+    return item.price.full ?? null;
+  }
 
-  const getHalfPrice = (item) => {
-    return item.halfPrice ?? null;
-  };
+  // Old format support
+  if (item?.fullPrice !== undefined && item?.fullPrice !== null) {
+    return item.fullPrice;
+  }
+
+  // Old price number support
+  if (
+    typeof item?.price === "number" ||
+    typeof item?.price === "string"
+  ) {
+    return item.price;
+  }
+
+  return null;
+};
+
+const getHalfPrice = (item) => {
+  // New backend format
+  if (item?.price && typeof item.price === "object") {
+    return item.price.half ?? null;
+  }
+
+  // Old format support
+  if (item?.halfPrice !== undefined && item?.halfPrice !== null) {
+    return item.halfPrice;
+  }
+
+  return null;
+};
+
+
 
   /* ================= TYPE ================= */
 
