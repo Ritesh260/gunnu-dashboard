@@ -63,44 +63,44 @@ function EditItem() {
   }, [id]);
 
   const fetchItem = async () => {
-    try {
-      const res = await axios.get(
-        `https://gunnu-dashboard.onrender.com/api/menu/${id}`
-      );
+  try {
+    const res = await axios.get(
+      `https://gunnu-dashboard.onrender.com/api/menu/${id}`
+    );
 
-      const data = res.data;
+    const data = res.data?.data || res.data;
 
-      if (!data) {
-        toast.error("Item not found");
-        navigate("/menu");
-        return;
-      }
-
-      setForm({
-        name: data.name || "",
-        category: data.category || "",
-        description: data.description || "",
-        tag: data.tag || "",
-        rating: data.rating || 5,
-
-        // FULL + HALF PRICE
-        fullPrice: data.fullPrice || "",
-        halfPrice: data.halfPrice || "",
-
-        type: data.type || "veg",
-      });
-
-      setPreview(data.image || "");
-    } catch (error) {
-      console.log(error);
-
-      toast.error("Failed to fetch item");
-
+    if (!data) {
+      toast.error("Item not found");
       navigate("/menu");
-    } finally {
-      setLoading(false);
+      return;
     }
-  };
+
+    setForm({
+      name: data.name || "",
+      category: data.category || "",
+      description: data.description || "",
+      tag: data.tag || "Popular",
+      rating: data.rating ?? 5,
+
+      // ✅ Backend stores price as { full, half }
+      // ✅ Fallback keeps old records working
+      fullPrice: data.price?.full ?? data.fullPrice ?? "",
+      halfPrice: data.price?.half ?? data.halfPrice ?? "",
+
+      type: data.type || "veg",
+    });
+
+    setPreview(data.image || "");
+  } catch (error) {
+    console.log("FETCH ITEM ERROR:", error);
+
+    toast.error("Failed to fetch item");
+    navigate("/menu");
+  } finally {
+    setLoading(false);
+  }
+};
 
   /* =========================
       HANDLE CHANGE
