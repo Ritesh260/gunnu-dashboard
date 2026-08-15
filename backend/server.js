@@ -36,14 +36,17 @@ app.use(
    ROUTES
 ========================= */
 const menuRoutes = require("./routes/menuRoutes");
+const categoryRoutes = require("./routes/categoryRoutes");
 const ownerRoutes = require("./routes/ownerRoutes");
 const authRoutes = require("./routes/authRoutes");
 const settingsRoutes = require("./routes/settingsRoutes");
 const galleryRoutes = require("./routes/galleryRoutes");
 const specialRoutes = require("./routes/specialRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
+
 app.use("/api/auth", authRoutes);
 app.use("/api/menu", menuRoutes);
+app.use("/api/categories", categoryRoutes);
 app.use("/api/owner", ownerRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/gallery", galleryRoutes);
