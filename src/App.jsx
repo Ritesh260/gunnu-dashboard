@@ -12,7 +12,7 @@ import GalleryAdmin from "./pages/GalleryAdmin";
 import SpecialsAdmin from "./pages/SpecialAdmin"; 
 import AdminReviews from "./pages/AdminReviews";
 import ProtectedRoute from "./components/ProtectedRoute";
-
+import CategoryPage from "./pages/CategoryPage";
 import { Routes, Route, Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
@@ -56,6 +56,10 @@ function App() {
 
           {/* MENU */}
           <Route path="menu" element={<MenuList />} />
+          <Route
+  path="/categories"
+  element={<CategoryPage />}
+/>
           <Route path="menu/add" element={<AddItem />} />
           <Route path="menu/edit/:id" element={<EditItem />} />
 

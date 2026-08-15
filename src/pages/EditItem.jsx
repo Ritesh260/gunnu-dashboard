@@ -29,28 +29,39 @@ function EditItem() {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
 
-  // FORM DATA
+  /* =========================
+      FORM DATA
+  ========================= */
+
   const [form, setForm] = useState({
     name: "",
     category: "",
     description: "",
     tag: "",
     rating: 5,
-    price: "",
+
+    // FULL + HALF PRICE
+    fullPrice: "",
+    halfPrice: "",
+
     type: "veg",
   });
 
-  // IMAGE
+  /* =========================
+      IMAGE
+  ========================= */
+
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState("");
-
-  useEffect(() => {
-    fetchItem();
-  }, []);
 
   /* =========================
       FETCH ITEM
   ========================= */
+
+  useEffect(() => {
+    fetchItem();
+  }, [id]);
+
   const fetchItem = async () => {
     try {
       const res = await axios.get(
@@ -71,7 +82,11 @@ function EditItem() {
         description: data.description || "",
         tag: data.tag || "",
         rating: data.rating || 5,
-        price: data.price || "",
+
+        // FULL + HALF PRICE
+        fullPrice: data.fullPrice || "",
+        halfPrice: data.halfPrice || "",
+
         type: data.type || "veg",
       });
 
@@ -90,6 +105,7 @@ function EditItem() {
   /* =========================
       HANDLE CHANGE
   ========================= */
+
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -100,6 +116,7 @@ function EditItem() {
   /* =========================
       HANDLE IMAGE
   ========================= */
+
   const handleImage = (e) => {
     const file = e.target.files[0];
 
@@ -107,13 +124,13 @@ function EditItem() {
 
     setImage(file);
 
-    // PREVIEW
     setPreview(URL.createObjectURL(file));
   };
 
   /* =========================
       UPDATE ITEM
   ========================= */
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -127,7 +144,11 @@ function EditItem() {
       formData.append("description", form.description);
       formData.append("tag", form.tag);
       formData.append("rating", form.rating);
-      formData.append("price", form.price);
+
+      // FULL + HALF PRICE
+      formData.append("fullPrice", form.fullPrice);
+      formData.append("halfPrice", form.halfPrice);
+
       formData.append("type", form.type);
 
       if (image) {
@@ -151,7 +172,9 @@ function EditItem() {
     } catch (error) {
       console.log(error);
 
-      toast.error("Update Failed");
+      toast.error(
+        error?.response?.data?.message || "Update Failed"
+      );
     } finally {
       setUpdating(false);
     }
@@ -160,140 +183,212 @@ function EditItem() {
   /* =========================
       LOADING
   ========================= */
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 dark:bg-gray-950 text-black dark:text-white flex justify-center items-center">
-        <div className="text-xl font-semibold">
-          Loading...
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+
+          <p className="text-lg font-semibold">
+            Loading Item...
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-950 text-black dark:text-white px-4 py-6">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-950 text-black dark:text-white px-3 sm:px-5 lg:px-8 py-5 sm:py-6">
 
-      {/* HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+      {/* ================= HEADER ================= */}
+
+      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-7">
 
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold">
             Edit Menu Item
           </h1>
 
-          <p className="text-gray-500 dark:text-gray-400 mt-1">
-            Update your food details
+          <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 mt-1">
+            Update your food item details
           </p>
         </div>
 
         <button
+          type="button"
           onClick={() => navigate("/menu")}
-          className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-5 py-3 rounded-xl"
+          className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-5 py-3 rounded-xl font-semibold transition"
         >
           <FaArrowLeft />
-          Back
+          Back to Menu
         </button>
 
       </div>
 
-      {/* MAIN CARD */}
-      <div className="max-w-6xl mx-auto bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-xl overflow-hidden">
+      {/* ================= MAIN CARD ================= */}
+
+      <div className="max-w-7xl mx-auto bg-white dark:bg-gray-900 rounded-2xl sm:rounded-3xl border border-gray-200 dark:border-gray-800 shadow-xl overflow-hidden">
 
         <form
           onSubmit={handleSubmit}
-          className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-5 sm:p-8"
+          className="grid grid-cols-1 lg:grid-cols-2 gap-7 lg:gap-10 p-4 sm:p-6 lg:p-8"
         >
 
-          {/* LEFT SIDE */}
+          {/* =====================================================
+              LEFT SIDE
+          ====================================================== */}
+
           <div className="space-y-5">
 
-            {/* NAME */}
+            {/* ================= ITEM NAME ================= */}
+
             <div>
-              <label className="block mb-2 text-sm font-medium">
+              <label className="block mb-2 text-sm font-semibold">
                 Item Name
               </label>
 
               <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-4">
-                <FiCoffee className="text-gray-500" />
+
+                <FiCoffee className="text-gray-500 shrink-0" />
 
                 <input
                   type="text"
                   name="name"
                   value={form.name}
                   onChange={handleChange}
+                  placeholder="Chicken Fried Rice"
                   className="w-full bg-transparent p-4 outline-none"
                   required
                 />
+
               </div>
             </div>
 
-            {/* CATEGORY */}
+            {/* ================= CATEGORY ================= */}
+
             <div>
-              <label className="block mb-2 text-sm font-medium">
+              <label className="block mb-2 text-sm font-semibold">
                 Category
               </label>
 
               <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-4">
-                <FiGrid className="text-gray-500" />
+
+                <FiGrid className="text-gray-500 shrink-0" />
 
                 <input
                   type="text"
                   name="category"
                   value={form.category}
                   onChange={handleChange}
+                  placeholder="Chinese"
                   className="w-full bg-transparent p-4 outline-none"
                   required
                 />
+
               </div>
             </div>
 
-            {/* DESCRIPTION */}
+            {/* ================= DESCRIPTION ================= */}
+
             <div>
-              <label className="block mb-2 text-sm font-medium">
+              <label className="block mb-2 text-sm font-semibold">
                 Description
               </label>
 
               <div className="flex items-start bg-gray-100 dark:bg-gray-800 rounded-xl px-4">
-                <FiFileText className="text-gray-500 mt-4" />
+
+                <FiFileText className="text-gray-500 mt-4 shrink-0" />
 
                 <textarea
                   rows="4"
                   name="description"
                   value={form.description}
                   onChange={handleChange}
+                  placeholder="Fresh ingredients, premium sauces and perfect flavor..."
                   className="w-full bg-transparent p-4 outline-none resize-none"
                   required
                 />
+
               </div>
             </div>
 
-            {/* TAG */}
+            {/* ================= TAG ================= */}
+
             <div>
-              <label className="block mb-2 text-sm font-medium">
+              <label className="block mb-2 text-sm font-semibold">
                 Tag
               </label>
 
-              <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-4">
-                <FiTag className="text-gray-500" />
+              <div className="relative">
 
-                <input
-                  type="text"
+                <FiTag className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 z-10" />
+
+                <select
                   name="tag"
                   value={form.tag}
                   onChange={handleChange}
-                  className="w-full bg-transparent p-4 outline-none"
-                />
+                  className="
+                    w-full
+                    appearance-none
+                    bg-white dark:bg-gray-800
+                    border border-gray-200 dark:border-gray-700
+                    text-gray-800 dark:text-white
+                    rounded-xl
+                    pl-12 pr-12
+                    py-4
+                    outline-none
+                    focus:ring-2
+                    focus:ring-orange-500
+                    focus:border-orange-500
+                  "
+                >
+                  <option value="">
+                    Select Tag
+                  </option>
+
+                  <option value="Popular">
+                    🔥 Popular
+                  </option>
+
+                  <option value="Hot">
+                    🌶 Hot
+                  </option>
+
+                  <option value="Best Seller">
+                    ⭐ Best Seller
+                  </option>
+
+                  <option value="Chef Special">
+                    👨‍🍳 Chef Special
+                  </option>
+
+                  <option value="Trending">
+                    📈 Trending
+                  </option>
+
+                  <option value="New">
+                    🆕 New
+                  </option>
+                </select>
+
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
+                  ▼
+                </span>
+
               </div>
             </div>
 
-            {/* RATING */}
+            {/* ================= RATING ================= */}
+
             <div>
-              <label className="block mb-2 text-sm font-medium">
+              <label className="block mb-2 text-sm font-semibold">
                 Rating
               </label>
 
               <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-4">
-                <FiStar className="text-gray-500" />
+
+                <FiStar className="text-yellow-500 shrink-0" />
 
                 <input
                   type="number"
@@ -305,37 +400,149 @@ function EditItem() {
                   onChange={handleChange}
                   className="w-full bg-transparent p-4 outline-none"
                 />
+
               </div>
             </div>
 
-            {/* PRICE */}
+            {/* =====================================================
+                FULL + HALF PLATE PRICING
+            ====================================================== */}
+
             <div>
-              <label className="block mb-2 text-sm font-medium">
-                Price
+
+              <label className="block mb-2 text-sm font-semibold">
+                Plate Pricing
               </label>
 
-              <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-4">
-                <FaRupeeSign className="text-gray-500" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-                <input
-                  type="number"
-                  name="price"
-                  value={form.price}
-                  onChange={handleChange}
-                  className="w-full bg-transparent p-4 outline-none"
-                  required
-                />
+                {/* FULL PLATE */}
+
+                <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-900/40 rounded-2xl p-4">
+
+                  <div className="flex items-center gap-2 mb-2">
+
+                    <div className="w-9 h-9 rounded-lg bg-orange-500 text-white flex items-center justify-center">
+                      <FaRupeeSign />
+                    </div>
+
+                    <div>
+                      <p className="font-bold">
+                        Full Plate
+                      </p>
+
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Full serving price
+                      </p>
+                    </div>
+
+                  </div>
+
+                  <div className="flex items-center bg-white dark:bg-gray-800 rounded-xl px-3">
+
+                    <FaRupeeSign className="text-orange-500" />
+
+                    <input
+                      type="number"
+                      name="fullPrice"
+                      value={form.fullPrice}
+                      onChange={handleChange}
+                      placeholder="220"
+                      min="0"
+                      className="w-full bg-transparent p-3 outline-none"
+                      required
+                    />
+
+                  </div>
+
+                </div>
+
+                {/* HALF PLATE */}
+
+                <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-900/40 rounded-2xl p-4">
+
+                  <div className="flex items-center gap-2 mb-2">
+
+                    <div className="w-9 h-9 rounded-lg bg-orange-500 text-white flex items-center justify-center">
+                      <FaRupeeSign />
+                    </div>
+
+                    <div>
+                      <p className="font-bold">
+                        Half Plate
+                      </p>
+
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Half serving price
+                      </p>
+                    </div>
+
+                  </div>
+
+                  <div className="flex items-center bg-white dark:bg-gray-800 rounded-xl px-3">
+
+                    <FaRupeeSign className="text-orange-500" />
+
+                    <input
+                      type="number"
+                      name="halfPrice"
+                      value={form.halfPrice}
+                      onChange={handleChange}
+                      placeholder="120"
+                      min="0"
+                      className="w-full bg-transparent p-3 outline-none"
+                      required
+                    />
+
+                  </div>
+
+                </div>
+
               </div>
+
             </div>
 
-            {/* TYPE */}
+            {/* ================= PRICE PREVIEW ================= */}
+
+            <div className="grid grid-cols-2 gap-3">
+
+              <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-4">
+
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Half Plate Price
+                </p>
+
+                <p className="text-xl font-bold text-orange-500 mt-1">
+                  ₹{form.halfPrice || "0"}
+                </p>
+
+              </div>
+
+              <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-4">
+
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Full Plate Price
+                </p>
+
+                <p className="text-xl font-bold text-orange-500 mt-1">
+                  ₹{form.fullPrice || "0"}
+                </p>
+
+              </div>
+
+            </div>
+
+            {/* ================= FOOD TYPE ================= */}
+
             <div>
-              <label className="block mb-2 text-sm font-medium">
+
+              <label className="block mb-2 text-sm font-semibold">
                 Food Type
               </label>
 
               <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-4">
-                <FaLeaf className="text-green-500" />
+
+                <FaLeaf className="text-green-500 shrink-0" />
 
                 <select
                   name="type"
@@ -343,22 +550,72 @@ function EditItem() {
                   onChange={handleChange}
                   className="w-full bg-transparent p-4 outline-none"
                 >
-                  <option value="veg">Veg</option>
-                  <option value="nonveg">Non Veg</option>
+                  <option value="veg">
+                    🥗 Veg
+                  </option>
+
+                  <option value="nonveg">
+                    🍗 Non Veg
+                  </option>
+
+                  <option value="non-veg">
+                    🍗 Non Veg
+                  </option>
                 </select>
+
               </div>
+
             </div>
 
           </div>
 
-          {/* RIGHT SIDE */}
+          {/* =====================================================
+              RIGHT SIDE
+          ====================================================== */}
+
           <div>
 
-            <label className="block mb-2 text-sm font-medium">
+            {/* ================= IMAGE ================= */}
+
+            <label className="block mb-2 text-sm font-semibold">
               Upload Food Image
             </label>
 
-            <label className="w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl min-h-[320px] flex flex-col justify-center items-center text-center cursor-pointer hover:border-orange-500 transition overflow-hidden bg-gray-50 dark:bg-gray-800 p-4 relative">
+            <label
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+
+                const file = e.dataTransfer.files[0];
+
+                if (file) {
+                  setImage(file);
+                  setPreview(URL.createObjectURL(file));
+                }
+              }}
+              className="
+                w-full
+                border-2
+                border-dashed
+                border-gray-300
+                dark:border-gray-700
+                rounded-2xl
+                min-h-[300px]
+                sm:min-h-[360px]
+                flex
+                flex-col
+                justify-center
+                items-center
+                text-center
+                cursor-pointer
+                hover:border-orange-500
+                transition
+                overflow-hidden
+                bg-gray-50
+                dark:bg-gray-800
+                p-4
+              "
+            >
 
               <input
                 type="file"
@@ -370,13 +627,13 @@ function EditItem() {
               {preview ? (
                 <img
                   src={preview}
-                  alt="preview"
-                  className="w-full h-full object-cover rounded-xl"
+                  alt={form.name}
+                  className="w-full h-[300px] sm:h-[360px] object-cover rounded-xl"
                 />
               ) : (
                 <>
                   <FiUploadCloud
-                    size={50}
+                    size={55}
                     className="text-orange-500 mb-4"
                   />
 
@@ -385,39 +642,106 @@ function EditItem() {
                   </p>
 
                   <p className="text-sm text-gray-500 mt-2">
-                    Tap here to upload image
+                    Tap here or drag & drop image
                   </p>
                 </>
               )}
 
             </label>
 
+            {/* ================= IMAGE NAME ================= */}
+
             {image && (
               <div className="mt-4 flex items-center gap-2 text-green-500 text-sm break-all">
+
                 <FaCheckCircle />
+
                 {image.name}
+
               </div>
             )}
 
-            {/* BUTTONS */}
-            <div className="grid grid-cols-2 gap-4 mt-6">
+            {/* ================= CURRENT PRICE SUMMARY ================= */}
+
+            <div className="mt-6 bg-gray-100 dark:bg-gray-800 rounded-2xl p-5">
+
+              <h3 className="font-bold text-lg mb-4">
+                Menu Preview
+              </h3>
+
+              <div className="flex items-center justify-between gap-4">
+
+                <div>
+                  <p className="font-semibold">
+                    {form.name || "Food Item"}
+                  </p>
+
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {form.category || "Category"}
+                  </p>
+                </div>
+
+                <div className="text-right">
+
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Half ₹{form.halfPrice || 0}
+                  </p>
+
+                  <p className="font-bold text-orange-500">
+                    Full ₹{form.fullPrice || 0}
+                  </p>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* ================= BUTTONS ================= */}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
 
               <button
                 type="submit"
                 disabled={updating}
-                className="bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl flex items-center justify-center gap-2 font-semibold"
+                className="
+                  bg-orange-500
+                  hover:bg-orange-600
+                  disabled:opacity-60
+                  disabled:cursor-not-allowed
+                  text-white
+                  py-4
+                  rounded-xl
+                  flex
+                  items-center
+                  justify-center
+                  gap-2
+                  font-semibold
+                  transition
+                "
               >
+
                 <FaSave />
 
                 {updating
                   ? "Updating..."
                   : "Update Item"}
+
               </button>
 
               <button
                 type="button"
                 onClick={() => navigate("/menu")}
-                className="bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 py-4 rounded-xl font-semibold"
+                className="
+                  bg-gray-200
+                  dark:bg-gray-800
+                  hover:bg-gray-300
+                  dark:hover:bg-gray-700
+                  py-4
+                  rounded-xl
+                  font-semibold
+                  transition
+                "
               >
                 Cancel
               </button>
@@ -429,6 +753,7 @@ function EditItem() {
         </form>
 
       </div>
+
     </div>
   );
 }

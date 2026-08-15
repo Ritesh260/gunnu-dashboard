@@ -17,6 +17,7 @@ import {
   FaTimes,
   FaMoon,
   FaSun,
+   FaTags,
   FaUserTie,
   FaStar
 } from "react-icons/fa";
@@ -160,6 +161,15 @@ function Sidebar() {
                   <FaListUl />
                   Menu List
                 </NavLink>
+                {/* CATEGORIES */}
+      <NavLink
+        to="/categories"
+        className={subNavStyle}
+        onClick={() => setSidebarOpen(false)}
+      >
+        <FaTags />
+        Categories
+      </NavLink>
 
               </div>
             )}
