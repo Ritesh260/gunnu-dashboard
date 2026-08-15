@@ -65,8 +65,8 @@ function AddItem() {
       setCategoryLoading(true);
 
       const res = await axios.get(
-        "http://localhost:5000/api/categories"
-      );
+  "https://gunnu-dashboard.onrender.com/api/categories"
+);
 
       console.log("Categories API:", res.data);
 
@@ -215,7 +215,7 @@ function AddItem() {
       });
 
       await axios.post(
-        "http://localhost:5000/api/menu/add",
+       "https://gunnu-dashboard.onrender.com/api/menu",
         data,
         {
           headers: {
