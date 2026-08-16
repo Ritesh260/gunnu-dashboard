@@ -104,23 +104,35 @@ function MenuList() {
     }
   };
 
-  /* ================= PRICE HELPERS ================= */
+  
+
+/* ================= PRICE HELPERS ================= */
 
 const getFullPrice = (item) => {
   // New backend format
   if (item?.price && typeof item.price === "object") {
-    return item.price.full ?? null;
+    if (
+      item.price.full !== undefined &&
+      item.price.full !== null &&
+      item.price.full !== ""
+    ) {
+      return item.price.full;
+    }
   }
 
-  // Old format support
-  if (item?.fullPrice !== undefined && item?.fullPrice !== null) {
+  // Old format
+  if (
+    item?.fullPrice !== undefined &&
+    item?.fullPrice !== null &&
+    item.fullPrice !== ""
+  ) {
     return item.fullPrice;
   }
 
-  // Old price number support
+  // Old price number/string format
   if (
     typeof item?.price === "number" ||
-    typeof item?.price === "string"
+    (typeof item?.price === "string" && item.price !== "")
   ) {
     return item.price;
   }
@@ -131,16 +143,28 @@ const getFullPrice = (item) => {
 const getHalfPrice = (item) => {
   // New backend format
   if (item?.price && typeof item.price === "object") {
-    return item.price.half ?? null;
+    if (
+      item.price.half !== undefined &&
+      item.price.half !== null &&
+      item.price.half !== ""
+    ) {
+      return item.price.half;
+    }
   }
 
-  // Old format support
-  if (item?.halfPrice !== undefined && item?.halfPrice !== null) {
+  // Old format
+  if (
+    item?.halfPrice !== undefined &&
+    item?.halfPrice !== null &&
+    item.halfPrice !== ""
+  ) {
     return item.halfPrice;
   }
 
   return null;
 };
+
+
 
 
 
@@ -345,48 +369,48 @@ const getHalfPrice = (item) => {
 
                       {/* ================= PRICING ================= */}
 
-                      <td className="p-5">
 
-                        <div className="space-y-2 min-w-[130px]">
+<td className="p-5">
 
-                          {getFullPrice(item) !== null && (
-                            <div className="flex items-center justify-between gap-4">
+  <div className="space-y-2 min-w-[130px]">
 
-                              <span className="text-xs text-gray-500 dark:text-gray-400">
-                                Full Plate
-                              </span>
+    {/* FULL PRICE */}
+    {getFullPrice(item) !== null && (
+      <div className="flex items-center justify-between gap-4">
+        <span className="text-xs text-gray-500 dark:text-gray-400">
+          Full
+        </span>
 
-                              <span className="font-bold text-orange-500">
-                                ₹{getFullPrice(item)}
-                              </span>
+        <span className="font-bold text-orange-500">
+          ₹{getFullPrice(item)}
+        </span>
+      </div>
+    )}
 
-                            </div>
-                          )}
+    {/* HALF PRICE */}
+    {getHalfPrice(item) !== null && (
+      <div className="flex items-center justify-between gap-4">
+        <span className="text-xs text-gray-500 dark:text-gray-400">
+          Half
+        </span>
 
-                          {getHalfPrice(item) !== null && (
-                            <div className="flex items-center justify-between gap-4">
+        <span className="font-bold text-orange-500">
+          ₹{getHalfPrice(item)}
+        </span>
+      </div>
+    )}
 
-                              <span className="text-xs text-gray-500 dark:text-gray-400">
-                                Half Plate
-                              </span>
+    {/* NO PRICE */}
+    {getFullPrice(item) === null &&
+      getHalfPrice(item) === null && (
+        <span className="text-gray-400 text-sm">
+          No pricing
+        </span>
+      )}
 
-                              <span className="font-bold text-orange-500">
-                                ₹{getHalfPrice(item)}
-                              </span>
+  </div>
 
-                            </div>
-                          )}
-
-                          {getFullPrice(item) === null &&
-                            getHalfPrice(item) === null && (
-                              <span className="text-gray-400 text-sm">
-                                No pricing
-                              </span>
-                            )}
-
-                        </div>
-
-                      </td>
+</td>
 
                       {/* TYPE */}
 
@@ -533,52 +557,64 @@ const getHalfPrice = (item) => {
 
                   {/* ================= PRICING ================= */}
 
-                  <div className="mt-5 bg-gray-50 dark:bg-gray-800/70 rounded-2xl p-4">
+           
 
-                    <h3 className="text-sm font-bold mb-3">
-                      Pricing
-                    </h3>
+<div className="mt-5 bg-gray-50 dark:bg-gray-800/70 rounded-2xl p-4">
 
-                    <div className="grid grid-cols-2 gap-3">
+  <h3 className="text-sm font-bold mb-3">
+    Pricing
+  </h3>
 
-                      {getFullPrice(item) !== null && (
-                        <div className="bg-white dark:bg-gray-900 rounded-xl p-3 border border-gray-200 dark:border-gray-700">
+  <div
+    className={`grid gap-3 ${
+      getFullPrice(item) !== null &&
+      getHalfPrice(item) !== null
+        ? "grid-cols-2"
+        : "grid-cols-1"
+    }`}
+  >
 
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            Full Plate
-                          </p>
+    {/* FULL */}
+    {getFullPrice(item) !== null && (
+      <div className="bg-white dark:bg-gray-900 rounded-xl p-3 border border-gray-200 dark:border-gray-700">
 
-                          <p className="text-lg font-bold text-orange-500 mt-1">
-                            ₹{getFullPrice(item)}
-                          </p>
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          Full Plate
+        </p>
 
-                        </div>
-                      )}
+        <p className="text-lg font-bold text-orange-500 mt-1">
+          ₹{getFullPrice(item)}
+        </p>
 
-                      {getHalfPrice(item) !== null && (
-                        <div className="bg-white dark:bg-gray-900 rounded-xl p-3 border border-gray-200 dark:border-gray-700">
+      </div>
+    )}
 
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            Half Plate
-                          </p>
+    {/* HALF */}
+    {getHalfPrice(item) !== null && (
+      <div className="bg-white dark:bg-gray-900 rounded-xl p-3 border border-gray-200 dark:border-gray-700">
 
-                          <p className="text-lg font-bold text-orange-500 mt-1">
-                            ₹{getHalfPrice(item)}
-                          </p>
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          Half Plate
+        </p>
 
-                        </div>
-                      )}
+        <p className="text-lg font-bold text-orange-500 mt-1">
+          ₹{getHalfPrice(item)}
+        </p>
 
-                    </div>
+      </div>
+    )}
 
-                    {getFullPrice(item) === null &&
-                      getHalfPrice(item) === null && (
-                        <p className="text-sm text-gray-400">
-                          No pricing added
-                        </p>
-                      )}
+  </div>
 
-                  </div>
+  {/* NO PRICING */}
+  {getFullPrice(item) === null &&
+    getHalfPrice(item) === null && (
+      <p className="text-sm text-gray-400">
+        No pricing added
+      </p>
+    )}
+
+</div>
 
                   {/* BUTTONS */}
 

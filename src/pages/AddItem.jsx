@@ -175,12 +175,11 @@ function AddItem() {
     }
 
     // Price validation
-    if (!form.fullPrice || !form.halfPrice) {
-      toast.error(
-        "Please enter both Full and Half plate prices"
-      );
-      return;
-    }
+    // Price validation
+if (!form.fullPrice) {
+  toast.error("Please enter Full plate price");
+  return;
+}
 
     // Image validation
     if (!image) {
@@ -199,8 +198,11 @@ function AddItem() {
       data.append("tag", form.tag);
       data.append("rating", form.rating);
 
-      data.append("fullPrice", form.fullPrice);
-      data.append("halfPrice", form.halfPrice);
+     data.append("fullPrice", form.fullPrice);
+
+if (form.halfPrice) {
+  data.append("halfPrice", form.halfPrice);
+}
 
       data.append("type", form.type);
 
@@ -225,7 +227,7 @@ function AddItem() {
         }
       );
 
-      toast.success("Item Added Successfully 🔥");
+      toast.success("Item Added Successfully");
 
       // =========================
       // RESET FORM
@@ -585,23 +587,22 @@ function AddItem() {
                 <div>
 
                   <label className="block mb-2 text-xs font-semibold text-gray-500 dark:text-gray-400">
-                    Half Plate Price
-                  </label>
+  Half Plate Price <span className="text-gray-400">(Optional)</span>
+</label>
 
                   <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-3 sm:px-4">
 
                     <FaRupeeSign className="text-orange-500 shrink-0" />
 
                     <input
-                      type="number"
-                      name="halfPrice"
-                      placeholder="140"
-                      min="0"
-                      value={form.halfPrice}
-                      onChange={handleChange}
-                      className="w-full bg-transparent p-3 sm:p-4 outline-none"
-                      required
-                    />
+  type="number"
+  name="halfPrice"
+  placeholder="140"
+  min="0"
+  value={form.halfPrice}
+  onChange={handleChange}
+  className="w-full bg-transparent p-3 sm:p-4 outline-none"
+/>
 
                   </div>
 
@@ -636,17 +637,19 @@ function AddItem() {
 
                   </div>
 
-                  <div className="bg-white dark:bg-gray-800 px-4 py-3 rounded-xl">
+                 {form.halfPrice && (
+  <div className="bg-white dark:bg-gray-800 px-4 py-3 rounded-xl">
 
-                    <p className="text-xs text-gray-500">
-                      Half Plate
-                    </p>
+    <p className="text-xs text-gray-500">
+      Half Plate
+    </p>
 
-                    <p className="text-lg font-bold text-orange-500">
-                      ₹{form.halfPrice || 0}
-                    </p>
+    <p className="text-lg font-bold text-orange-500">
+      ₹{form.halfPrice}
+    </p>
 
-                  </div>
+  </div>
+)}
 
                 </div>
 
