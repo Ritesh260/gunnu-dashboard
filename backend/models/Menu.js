@@ -51,7 +51,7 @@ const menuSchema = new mongoose.Schema(
 
       half: {
         type: Number,
-        required: true,
+        required: false,
         min: 0,
       },
     },

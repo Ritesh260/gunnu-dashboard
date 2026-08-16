@@ -41,19 +41,32 @@ router.post(
       ========================= */
 
       const fullPrice = Number(req.body.fullPrice);
-      const halfPrice = Number(req.body.halfPrice);
 
-      if (
-        !req.body.fullPrice ||
-        !req.body.halfPrice ||
-        Number.isNaN(fullPrice) ||
-        Number.isNaN(halfPrice)
-      ) {
-        return res.status(400).json({
-          success: false,
-          error: "Full price and half price are required",
-        });
-      }
+if (
+  !req.body.fullPrice ||
+  Number.isNaN(fullPrice)
+) {
+  return res.status(400).json({
+    success: false,
+    error: "Full price is required",
+  });
+}
+
+let halfPrice;
+
+if (
+  req.body.halfPrice !== undefined &&
+  req.body.halfPrice !== ""
+) {
+  halfPrice = Number(req.body.halfPrice);
+
+  if (Number.isNaN(halfPrice)) {
+    return res.status(400).json({
+      success: false,
+      error: "Invalid half price",
+    });
+  }
+}
 
       /* =========================
          UPLOAD IMAGE
@@ -171,20 +184,56 @@ router.put(
     try {
       console.log("UPDATE BODY:", req.body);
 
-      const fullPrice = Number(req.body.fullPrice);
-      const halfPrice = Number(req.body.halfPrice);
+      /* =========================
+         FULL PRICE
+         REQUIRED
+      ========================= */
 
       if (
-        !req.body.fullPrice ||
-        !req.body.halfPrice ||
-        Number.isNaN(fullPrice) ||
-        Number.isNaN(halfPrice)
+        req.body.fullPrice === undefined ||
+        req.body.fullPrice === null ||
+        req.body.fullPrice === ""
       ) {
         return res.status(400).json({
           success: false,
-          error: "Full price and half price are required",
+          error: "Full price is required",
         });
       }
+
+      const fullPrice = Number(req.body.fullPrice);
+
+      if (Number.isNaN(fullPrice)) {
+        return res.status(400).json({
+          success: false,
+          error: "Invalid full price",
+        });
+      }
+
+      /* =========================
+         HALF PRICE
+         OPTIONAL
+      ========================= */
+
+      let halfPrice;
+
+      if (
+        req.body.halfPrice !== undefined &&
+        req.body.halfPrice !== null &&
+        req.body.halfPrice !== ""
+      ) {
+        halfPrice = Number(req.body.halfPrice);
+
+        if (Number.isNaN(halfPrice)) {
+          return res.status(400).json({
+            success: false,
+            error: "Invalid half price",
+          });
+        }
+      }
+
+      /* =========================
+         UPDATE DATA
+      ========================= */
 
       const updateData = {
         name: req.body.name,
@@ -192,15 +241,29 @@ router.put(
         description: req.body.description,
         tag: req.body.tag || "Popular",
 
-        /* FULL + HALF PRICE */
         price: {
           full: fullPrice,
-          half: halfPrice,
         },
 
         type: req.body.type,
         rating: Number(req.body.rating) || 5,
       };
+
+      /* =========================
+         HALF PRICE
+         
+         If entered:
+         save half price
+
+         If removed:
+         don't keep old half price
+      ========================= */
+
+      if (halfPrice !== undefined) {
+        updateData.price.half = halfPrice;
+      } else {
+        updateData.price.half = undefined;
+      }
 
       /* =========================
          NEW IMAGE
